@@ -1,0 +1,107 @@
+@use '../../../../styles/mixins' as mixins;
+@use '../../../../styles/variables' as vars;
+
+:host {
+  display: block;
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+.header {
+  height: vars.$header-height;
+  padding: 0 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: var(--header-background);
+  border-bottom: 1px solid var(--border);
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  &__profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+
+    display: grid;
+    place-items: center;
+
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  &__username {
+    font-size: 0.875rem;
+  }
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 9px 13px;
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  background: var(--surface);
+  color: var(--text-primary);
+
+  transition: 0.2s ease;
+
+  &:hover {
+    background: var(--surface-hover);
+  }
+
+  &__icon {
+    font-size: 19px;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+}
+
+@media (max-width: 767px) {
+  .header {
+    padding: 0 16px;
+
+    &__username,
+    .theme-toggle__label {
+      display: none;
+    }
+
+    &__actions {
+      gap: 10px;
+    }
+  }
+
+  .theme-toggle {
+    padding: 9px;
+  }
+}

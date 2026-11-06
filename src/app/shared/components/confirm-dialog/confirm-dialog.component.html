@@ -1,0 +1,15 @@
+<div class="dialog-backdrop" role="presentation">
+  <section class="dialog" role="alertdialog" aria-modal="true">
+    <h2>{{ title() }}</h2>
+    <p>{{ message() }}</p>
+
+    <div class="dialog-actions">
+      <button type="button" class="button button-secondary" (click)="cancelled.emit()">
+        Cancelar
+      </button>
+      <button type="button" class="button button-danger" (click)="confirmed.emit()">
+        Confirmar
+      </button>
+    </div>
+  </section>
+</div>

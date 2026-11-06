@@ -1,0 +1,97 @@
+@use '../../../../styles/variables' as vars;
+
+:host {
+  display: block;
+  flex: 0 0 vars.$sidebar-width;
+  min-height: 100%;
+}
+
+.sidebar {
+  min-height: 100%;
+  width: 100%;
+  padding: 24px 16px;
+  border-right: 1px solid var(--border);
+  background: var(--sidebar-background);
+  color: var(--text-primary);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 40px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.brand strong,
+.brand small {
+  display: block;
+}
+
+.brand small {
+  margin-top: 2px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+nav {
+  display: grid;
+  gap: 6px;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border-radius: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+nav a:hover,
+nav a.active {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+@media (max-width: 720px) {
+  .sidebar {
+    width: 76px;
+    padding-inline: 12px;
+  }
+
+  :host {
+    flex-basis: 76px;
+  }
+
+  .brand {
+    justify-content: center;
+  }
+
+  .brand > span:last-child {
+    display: none;
+  }
+
+  nav a {
+    justify-content: center;
+    font-size: 0;
+  }
+
+  nav a span {
+    font-size: 18px;
+  }
+}

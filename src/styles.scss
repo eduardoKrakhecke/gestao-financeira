@@ -1,1 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+@use './styles/variables';
+@use './styles/theme';
+@use './styles/mixins';
+@use './styles/buttons';
+@use './styles/forms';
+@use './styles/cards';
+@use './styles/layout';
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--background);
+  color: var(--text-primary);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}

@@ -1,0 +1,40 @@
+<header class="header">
+
+  <div class="header__left">
+    <h2 class="header__title">Visão geral</h2>
+  </div>
+
+  <div class="header__actions">
+
+    <button
+      type="button"
+      class="theme-toggle"
+      (click)="toggleTheme()"
+      [attr.aria-label]="
+        theme() === 'dark'
+          ? 'Ativar tema claro'
+          : 'Ativar tema escuro'
+      "
+      [attr.title]="
+        theme() === 'dark'
+          ? 'Ativar tema claro'
+          : 'Ativar tema escuro'
+      "
+    >
+      <span class="theme-toggle__icon" aria-hidden="true">
+        {{ theme() === 'dark' ? '☀' : '☾' }}
+      </span>
+
+      <span class="theme-toggle__label">
+        {{ theme() === 'dark' ? 'Light Mode' : 'Dark Mode' }}
+      </span>
+    </button>
+
+    <button class="header__profile" type="button">
+      <span class="header__avatar">E</span>
+      <span class="header__username">Meu perfil</span>
+    </button>
+
+  </div>
+
+</header>

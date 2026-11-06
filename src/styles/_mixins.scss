@@ -1,0 +1,38 @@
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin responsive($breakpoint) {
+  @if $breakpoint == mobile {
+    @media (max-width: 767px) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint == tablet {
+    @media (max-width: 1024px) {
+      @content;
+    }
+  }
+
+  @else if $breakpoint == desktop {
+    @media (min-width: 1025px) {
+      @content;
+    }
+  }
+}
+
+@mixin card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-card);
+}

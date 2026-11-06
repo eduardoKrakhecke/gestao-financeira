@@ -1,0 +1,95 @@
+
+@use './variables' as vars;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 18px;
+
+  border: 1px solid transparent;
+  border-radius: vars.$radius-md;
+
+  font-size: vars.$font-size-sm;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all vars.$transition-default;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  // Primary
+  &--primary {
+    background: var(--primary);
+    color: #ffffff;
+
+    &:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+  }
+
+  // Secondary
+  &--secondary {
+    background: var(--surface-secondary);
+    color: var(--text-primary);
+    border-color: var(--border);
+
+    &:hover:not(:disabled) {
+      background: var(--surface-hover);
+    }
+  }
+
+  // Success
+  &--success {
+    background: var(--success);
+    color: #ffffff;
+  }
+
+  // Danger
+  &--danger {
+    background: var(--danger);
+    color: #ffffff;
+  }
+
+  // Outline
+  &--outline {
+    background: transparent;
+    border-color: var(--primary);
+    color: var(--primary);
+
+    &:hover:not(:disabled) {
+      background: var(--primary-light);
+    }
+  }
+
+  // Ghost
+  &--ghost {
+    background: transparent;
+    color: var(--text-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--surface-hover);
+    }
+  }
+
+  // Sizes
+  &--sm {
+    padding: 7px 12px;
+    font-size: vars.$font-size-xs;
+  }
+
+  &--lg {
+    padding: 13px 22px;
+    font-size: vars.$font-size-md;
+  }
+
+  // Full width
+  &--block {
+    width: 100%;
+  }
+}

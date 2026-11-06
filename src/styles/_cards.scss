@@ -1,0 +1,8 @@
+@use 'variables' as vars;
+
+.app-card {
+  border: 1px solid vars.$gray-200;
+  border-radius: vars.$radius-md;
+  background: vars.$white;
+  box-shadow: 0 8px 24px rgb(23 32 51 / 5%);
+}
