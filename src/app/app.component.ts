@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
-import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
+import { RouterOutlet } from '@angular/router';
 import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MainLayoutComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

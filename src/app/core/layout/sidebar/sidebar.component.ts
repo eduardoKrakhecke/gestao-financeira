@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../auth/auth.service';
 
 interface SidebarItem {
   label: string;
@@ -24,6 +25,17 @@ export class SidebarComponent {
 
   @Input() mobileOpen = false;
   @Output() closeMenu = new EventEmitter<void>();
+
+  private readonly authService = inject(AuthService);
+  readonly currentUser = this.authService.currentUser;
+
+  get userInitials(): string {
+    return this.authService.getUserInitials();
+  }
+
+  logout(): void {
+    this.authService.logout();
+  }
 
   readonly groups: SidebarGroup[] = [
     {

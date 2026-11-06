@@ -1,4 +1,3 @@
-
 {
   "users": [
     {
@@ -8,6 +7,14 @@
       "password": "demo-only",
       "avatar": null,
       "createdAt": "2026-11-05T12:00:00.000Z"
+    },
+    {
+      "name": "Patricia",
+      "email": "eduardokg.mi6@gmail.com",
+      "password": "12345678",
+      "avatar": null,
+      "createdAt": "2026-11-06T17:09:13.129Z",
+      "id": "m2exETG"
     }
   ],
   "accounts": [

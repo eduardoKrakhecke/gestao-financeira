@@ -1,47 +1,68 @@
-<div class="login">
-  <div class="login__card">
-    <div class="login__brand">
-      <h1>FinanceFlow</h1>
-      <p>Gestão financeira inteligente</p>
+<main class="login-page">
+  <section class="login-card" aria-labelledby="login-title">
+    <div class="login-brand">
+      <span class="login-brand__mark">G</span>
+      <div>
+        <strong>Gestão</strong>
+        <small>Financeira</small>
+      </div>
     </div>
 
-    <div class="login__heading">
-      <h2>Bem-vindo de volta!</h2>
-      <p>Entre com seus dados para continuar.</p>
-    </div>
+    <header class="login-header">
+      <span>Bem-vindo</span>
+      <h1 id="login-title">Acesse sua conta</h1>
+      <p>Entre para acompanhar sua vida financeira.</p>
+    </header>
 
     <form (ngSubmit)="onSubmit()">
-      <div class="login__field">
-        <label for="email">E-mail</label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          [(ngModel)]="email"
-          placeholder="seu@email.com"
-          required
-        />
-      </div>
 
-      <div class="login__field">
-        <label for="password">Senha</label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          [(ngModel)]="password"
-          placeholder="Digite sua senha"
-          required
-        />
-      </div>
+  <div class="login__field">
+    <label for="email">E-mail</label>
 
-      <button type="submit" class="login__button">
-        Entrar
-      </button>
+    <input
+      id="email"
+      type="email"
+      name="email"
+      [(ngModel)]="email"
+      placeholder="seu@email.com"
+      autocomplete="username"
+      required
+    />
+  </div>
+
+  <div class="login__field">
+    <label for="password">Senha</label>
+
+    <input
+      id="password"
+      type="password"
+      name="password"
+      [(ngModel)]="password"
+      placeholder="Digite sua senha"
+      autocomplete="current-password"
+      required
+    />
+  </div>
+
+  @if (errorMessage()) {
+    <div class="login__error" role="alert">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <button
+    type="submit"
+    class="login__button"
+    [disabled]="loading()"
+  >
+    {{ loading() ? 'Entrando...' : 'Entrar' }}
+  </button>
+
     </form>
 
-    <p class="login__footer">
-      FinanceFlow · Gestão financeira
+    <p class="login__register">
+      Ainda não possui uma conta?
+      <a routerLink="/register">Criar conta</a>
     </p>
-  </div>
-</div>
+  </section>
+</main>

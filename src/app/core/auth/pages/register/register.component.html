@@ -1,0 +1,94 @@
+<div class="register">
+  <div class="register__card">
+
+    <div class="register__brand">
+      <h1>FinanceFlow</h1>
+      <p>Gestão financeira inteligente</p>
+    </div>
+
+    <div class="register__heading">
+      <h2>Crie sua conta</h2>
+      <p>Comece a organizar sua vida financeira.</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+
+      <div class="register__field">
+        <label for="name">Nome completo</label>
+
+        <input
+          id="name"
+          type="text"
+          name="name"
+          [(ngModel)]="name"
+          placeholder="Digite seu nome"
+          autocomplete="name"
+          required
+        />
+      </div>
+
+      <div class="register__field">
+        <label for="email">E-mail</label>
+
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="seu@email.com"
+          autocomplete="email"
+          required
+        />
+      </div>
+
+      <div class="register__field">
+        <label for="password">Senha</label>
+
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Mínimo de 8 caracteres"
+          autocomplete="new-password"
+          required
+        />
+      </div>
+
+      <div class="register__field">
+        <label for="confirmPassword">Confirmar senha</label>
+
+        <input
+          id="confirmPassword"
+          type="password"
+          name="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          placeholder="Digite novamente sua senha"
+          autocomplete="new-password"
+          required
+        />
+      </div>
+
+      @if (errorMessage()) {
+        <div class="register__error" role="alert">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="register__button"
+        [disabled]="loading()"
+      >
+        {{ loading() ? 'Criando conta...' : 'Criar minha conta' }}
+      </button>
+
+    </form>
+
+    <p class="register__login">
+      Já possui uma conta?
+      <a routerLink="/login">Entrar</a>
+    </p>
+
+  </div>
+</div>

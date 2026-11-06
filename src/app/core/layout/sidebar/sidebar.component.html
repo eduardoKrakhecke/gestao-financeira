@@ -143,14 +143,28 @@
 
   <div class="sidebar__footer">
     <div class="sidebar__profile">
-      <div class="sidebar__avatar">UD</div>
-
-      <div class="sidebar__profile-info">
-        <strong>Usuário Demo</strong>
-        <span>Conta pessoal</span>
+      <div class="sidebar__avatar">
+        {{ userInitials }}
       </div>
 
-      <span class="sidebar__profile-status"></span>
+      <div class="sidebar__profile-info">
+        <strong>{{ currentUser()?.name }}</strong>
+        <span>{{ currentUser()?.email }}</span>
+      </div>
+
+      <button
+        class="sidebar__logout"
+        type="button"
+        title="Sair"
+        aria-label="Sair da aplicação"
+        (click)="logout()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M10 17l5-5-5-5"/>
+          <path d="M15 12H3"/>
+          <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/>
+        </svg>
+      </button>
     </div>
 
     <span class="sidebar__version">FinanceFlow · v1.0.0</span>
