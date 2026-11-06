@@ -1,11 +1,24 @@
-<header class="header">
 
+<header class="header">
   <div class="header__left">
-    <h2 class="header__title">Visão geral</h2>
+    <button
+      class="header__menu-button"
+      type="button"
+      aria-label="Abrir menu de navegação"
+      (click)="openMenu()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <div class="header__heading">
+      <span class="header__eyebrow">FINANCEFLOW</span>
+      <h1>Gestão financeira</h1>
+    </div>
   </div>
 
   <div class="header__actions">
-
     <button
       type="button"
       class="theme-toggle"
@@ -30,11 +43,32 @@
       </span>
     </button>
 
-    <button class="header__profile" type="button">
-      <span class="header__avatar">E</span>
-      <span class="header__username">Meu perfil</span>
+    <button
+      class="header__notification"
+      type="button"
+      aria-label="Notificações"
+      title="Notificações"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+        <path d="M10 21h4" />
+      </svg>
+      <span class="header__notification-dot"></span>
     </button>
 
-  </div>
+    <div class="header__divider"></div>
 
+    <button class="header__user" type="button" aria-label="Perfil do usuário">
+      <span class="header__avatar">UD</span>
+
+      <span class="header__user-info">
+        <strong>Usuário Demo</strong>
+        <small>Conta pessoal</small>
+      </span>
+
+      <svg class="header__chevron" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m7 10 5 5 5-5" />
+      </svg>
+    </button>
+  </div>
 </header>

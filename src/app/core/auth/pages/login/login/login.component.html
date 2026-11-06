@@ -1,0 +1,47 @@
+<div class="login">
+  <div class="login__card">
+    <div class="login__brand">
+      <h1>FinanceFlow</h1>
+      <p>Gestão financeira inteligente</p>
+    </div>
+
+    <div class="login__heading">
+      <h2>Bem-vindo de volta!</h2>
+      <p>Entre com seus dados para continuar.</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="login__field">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="seu@email.com"
+          required
+        />
+      </div>
+
+      <div class="login__field">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          placeholder="Digite sua senha"
+          required
+        />
+      </div>
+
+      <button type="submit" class="login__button">
+        Entrar
+      </button>
+    </form>
+
+    <p class="login__footer">
+      FinanceFlow · Gestão financeira
+    </p>
+  </div>
+</div>

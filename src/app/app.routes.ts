@@ -1,15 +1,83 @@
 import { Routes } from '@angular/router';
+import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
+import { authGuard } from './core/auth/auth.guard';
 
 export const routes: Routes = [
+
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./core/auth/pages/login/login/login.component')
+        .then(m => m.LoginComponent)
+  },
   {
     path: '',
-    loadChildren: () =>
-      import('./features/dashboard/dashboard.routes').then(
-        module => module.DASHBOARD_ROUTES
-      )
+    component: MainLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'dashboard',
+        loadChildren: () =>
+          import('./features/dashboard/dashboard.routes')
+            .then(m => m.DASHBOARD_ROUTES)
+      },
+      {
+        path: 'transactions',
+        loadChildren: () =>
+          import('./features/transactions/transactions.routes')
+            .then(m => m.TRANSACTIONS_ROUTES)
+      },
+      {
+        path: 'accounts',
+        loadChildren: () =>
+          import('./features/accounts/accounts.routes')
+            .then(m => m.ACCOUNTS_ROUTES)
+      },
+      {
+        path: 'categories',
+        loadChildren: () =>
+          import('./features/categories/categories.routes')
+            .then(m => m.CATEGORIES_ROUTES)
+      },
+      {
+        path: 'budgets',
+        loadChildren: () =>
+          import('./features/budgets/budgets.routes')
+            .then(m => m.BUDGETS_ROUTES)
+      },
+      {
+        path: 'goals',
+        loadChildren: () =>
+          import('./features/goals/goals.routes')
+            .then(m => m.GOALS_ROUTES)
+      },
+      {
+        path: 'transfers',
+        loadChildren: () =>
+          import('./features/transfers/transfers.routes')
+            .then(m => m.TRANSFERS_ROUTES)
+      },
+      {
+        path: 'reports',
+        loadChildren: () =>
+          import('./features/reports/reports.routes')
+            .then(m => m.REPORTS_ROUTES)
+      },
+      {
+        path: 'settings',
+        loadChildren: () =>
+          import('./features/settings/settings.routes')
+            .then(m => m.SETTINGS_ROUTES)
+      },
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'dashboard'
+      }
+    ]
   },
   {
     path: '**',
-    redirectTo: ''
+    redirectTo: 'dashboard'
   }
 ];

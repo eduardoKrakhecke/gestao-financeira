@@ -1,33 +1,40 @@
+@use '../../../../styles/variables' as vars;
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
 .app-layout {
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
   background: var(--background);
 
-  &__body {
-    display: flex;
-    flex: 1;
-    min-height: 0;
-  }
-
   &__content {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
+    min-height: 100vh;
+    margin-left: vars.$sidebar-width;
+
+    transition:
+      margin-left vars.$transition-default,
+      background vars.$transition-default;
   }
 
   &__page {
-    flex: 1;
-    padding: 28px;
-    overflow-x: hidden;
+    min-height: calc(100vh - 72px);
+    padding: 30px;
+
+    background: var(--background);
   }
 }
 
 @media (max-width: 767px) {
   .app-layout {
+    &__content {
+      margin-left: 0;
+    }
+
     &__page {
-      padding: 16px;
+      min-height: calc(100vh - 64px);
+      padding: 18px 14px;
     }
   }
 }
