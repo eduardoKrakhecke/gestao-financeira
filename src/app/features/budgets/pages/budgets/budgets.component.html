@@ -1,0 +1,206 @@
+<section class="budgets-page">
+  <header class="page-header">
+    <div>
+      <h1>Orçamentos</h1>
+      <p>Controle seus limites de gastos por categoria.</p>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="openCreateForm()">
+      <span>+</span>
+      Novo orçamento
+    </button>
+  </header>
+
+  @if (error()) {
+    <div class="error-message" role="alert">
+      {{ error() }}
+    </div>
+  }
+
+  <div class="month-filter">
+    <label for="budget-month">Mês de referência</label>
+    <input
+      id="budget-month"
+      type="month"
+      [value]="month()"
+      (change)="changeMonth($event)">
+  </div>
+
+  <div class="budget-overview">
+    <article class="overview-card">
+      <span class="overview-card__label">Limite total</span>
+      <strong>{{ formatCurrency(totalLimit()) }}</strong>
+    </article>
+
+    <article class="overview-card">
+      <span class="overview-card__label">Total utilizado</span>
+      <strong>{{ formatCurrency(totalSpent()) }}</strong>
+    </article>
+
+    <article class="overview-card">
+      <span class="overview-card__label">Saldo disponível</span>
+      <strong [class.negative]="totalRemaining() < 0">
+        {{ formatCurrency(totalRemaining()) }}
+      </strong>
+    </article>
+
+    <article class="overview-card">
+      <span class="overview-card__label">Consumo geral</span>
+      <strong>{{ overallPercentage() | number:'1.0-1' }}%</strong>
+    </article>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      Carregando orçamentos...
+    </div>
+  } @else if (budgets().length === 0) {
+    <div class="empty-state">
+      <div class="empty-state__icon">📊</div>
+      <h2>Nenhum orçamento cadastrado</h2>
+      <p>Adicione um orçamento para começar a acompanhar seus gastos.</p>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="openCreateForm()">
+        Criar primeiro orçamento
+      </button>
+    </div>
+  } @else {
+    <div class="budgets-list">
+      @for (budget of budgets(); track budget.id) {
+        <article class="budget-card">
+          <div class="budget-card__header">
+            <div class="budget-card__category">
+              <span
+                class="category-indicator"
+                [style.background]="budget.categoryColor">
+              </span>
+
+              <div>
+                <h2>{{ budget.categoryName }}</h2>
+                <span class="budget-card__subtitle">
+                  Orçamento mensal
+                </span>
+              </div>
+            </div>
+
+            <span
+              class="budget-status"
+              [class.budget-status--warning]="budget.status === 'warning'"
+              [class.budget-status--exceeded]="budget.status === 'exceeded'">
+
+              @if (budget.status === 'exceeded') {
+                Acima do limite
+              } @else if (budget.status === 'warning') {
+                Atenção
+              } @else {
+                Dentro do limite
+              }
+            </span>
+          </div>
+
+          <div class="budget-card__values">
+            <div>
+              <span>Gasto</span>
+              <strong>{{ formatCurrency(budget.spent) }}</strong>
+            </div>
+
+            <div>
+              <span>Limite</span>
+              <strong>{{ formatCurrency(budget.limit) }}</strong>
+            </div>
+
+            <div>
+              <span>Disponível</span>
+              <strong [class.negative]="budget.remaining < 0">
+                {{ formatCurrency(budget.remaining) }}
+              </strong>
+            </div>
+          </div>
+
+          <div
+            class="progress-track"
+            role="progressbar"
+            [attr.aria-valuenow]="budget.percentage"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-label]="'Consumo do orçamento de ' + budget.categoryName">
+
+            <div
+              class="progress-track__fill"
+              [class.progress-track__fill--warning]="budget.status === 'warning'"
+              [class.progress-track__fill--exceeded]="budget.status === 'exceeded'"
+              [style.width.%]="Math.min(budget.percentage, 100)">
+            </div>
+          </div>
+
+          <div class="budget-card__footer">
+            <span>{{ budget.percentage | number:'1.0-1' }}% utilizado</span>
+
+            <div class="budget-actions">
+              @if (deletingId() === budget.id) {
+                <span class="delete-confirmation">Confirmar exclusão?</span>
+
+                <button
+                  type="button"
+                  class="action-button action-button--danger"
+                  (click)="confirmDelete(budget.id)">
+                  Sim
+                </button>
+
+                <button
+                  type="button"
+                  class="action-button"
+                  (click)="cancelDelete()">
+                  Não
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="action-button"
+                  (click)="openEditForm(budget)">
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  class="action-button action-button--danger"
+                  (click)="askDelete(budget.id)">
+                  Excluir
+                </button>
+              }
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+@if (formVisible()) {
+  <div class="modal-backdrop" (click)="closeForm()">
+    <section
+      class="budget-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Formulário de orçamento"
+      (click)="$event.stopPropagation()">
+
+      <app-budget-form
+        [categories]="categories()"
+        [budget]="selectedBudget()"
+        (save)="saveBudget($event)"
+        (cancel)="closeForm()">
+      </app-budget-form>
+
+      @if (saving()) {
+        <p class="saving-message">Salvando orçamento...</p>
+      }
+    </section>
+  </div>
+}

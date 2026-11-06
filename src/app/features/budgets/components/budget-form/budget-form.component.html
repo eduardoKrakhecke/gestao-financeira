@@ -1,0 +1,65 @@
+<form class="budget-form" [formGroup]="form" (ngSubmit)="submit()">
+  <div class="budget-form__header">
+    <div>
+      <h2>{{ budget ? 'Editar orçamento' : 'Novo orçamento' }}</h2>
+      <p>Defina um limite de gastos para uma categoria.</p>
+    </div>
+
+    <button
+      type="button"
+      class="budget-form__close"
+      aria-label="Fechar formulário"
+      (click)="cancel.emit()">
+      &times;
+    </button>
+  </div>
+
+  <div class="form-field">
+    <label for="categoryId">Categoria</label>
+
+    <select id="categoryId" formControlName="categoryId">
+      <option value="">Selecione uma categoria</option>
+
+      @for (category of categories; track category.id) {
+        <option [value]="category.id">{{ category.name }}</option>
+      }
+    </select>
+
+    @if (form.controls.categoryId.touched && form.controls.categoryId.invalid) {
+      <small class="form-error">Selecione uma categoria.</small>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="month">Mês de referência</label>
+    <input id="month" type="month" formControlName="month">
+    @if (form.controls.month.touched && form.controls.month.invalid) {
+      <small class="form-error">Informe o mês de referência.</small>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="limit">Limite de gastos (R$)</label>
+    <input
+      id="limit"
+      type="number"
+      min="0.01"
+      step="0.01"
+      formControlName="limit"
+      placeholder="Ex.: 1000,00">
+
+    @if (form.controls.limit.touched && form.controls.limit.invalid) {
+      <small class="form-error">Informe um limite maior que zero.</small>
+    }
+  </div>
+
+  <div class="budget-form__actions">
+    <button type="button" class="btn-secondary" (click)="cancel.emit()">
+      Cancelar
+    </button>
+
+    <button type="submit" class="btn-primary">
+      {{ budget ? 'Salvar alterações' : 'Cadastrar orçamento' }}
+    </button>
+  </div>
+</form>

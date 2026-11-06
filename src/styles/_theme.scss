@@ -10,6 +10,7 @@
   --surface: #ffffff;
   --surface-secondary: #f9fafb;
   --surface-hover: #f3f4f6;
+  --surface-color: var(--surface);
 
   --sidebar-background: #ffffff;
   --header-background: #ffffff;
@@ -19,8 +20,10 @@
   --text-muted: #9ca3af;
 
   --border: #e5e7eb;
+  --border-color: var(--border);
 
   --primary: #2563eb;
+  --primary-color: var(--primary);
   --primary-hover: #1d4ed8;
   --primary-light: #eff6ff;
 
