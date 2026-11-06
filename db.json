@@ -23,7 +23,7 @@
       "userId": "1",
       "name": "Conta Principal",
       "type": "checking",
-      "initialBalance": 5000,
+      "initialBalance": 500000,
       "currency": "BRL",
       "color": "#2563eb",
       "active": true
@@ -33,7 +33,7 @@
       "userId": "1",
       "name": "Carteira",
       "type": "cash",
-      "initialBalance": 500,
+      "initialBalance": 50000,
       "currency": "BRL",
       "color": "#16a34a",
       "active": true
@@ -73,7 +73,7 @@
       "categoryId": "1",
       "description": "Salário mensal",
       "type": "income",
-      "amount": 6500,
+      "amount": 650000,
       "dueDate": "2026-11-05",
       "paymentDate": "2026-11-05",
       "status": "paid",
@@ -86,10 +86,62 @@
       "categoryId": "2",
       "description": "Supermercado",
       "type": "expense",
-      "amount": 450,
+      "amount": 45000,
       "dueDate": "2026-11-05",
       "paymentDate": "2026-11-05",
       "status": "paid",
+      "notes": ""
+    },
+    {
+      "id": "3",
+      "userId": "1",
+      "accountId": "1",
+      "categoryId": "3",
+      "description": "Aluguel",
+      "type": "expense",
+      "amount": 180000,
+      "dueDate": "2026-11-06",
+      "paymentDate": "2026-11-06",
+      "status": "paid",
+      "notes": ""
+    },
+    {
+      "id": "4",
+      "userId": "1",
+      "accountId": "1",
+      "categoryId": "2",
+      "description": "Restaurante",
+      "type": "expense",
+      "amount": 12500,
+      "dueDate": "2026-11-08",
+      "paymentDate": null,
+      "status": "pending",
+      "notes": ""
+    },
+    {
+      "id": "5",
+      "userId": "1",
+      "accountId": "2",
+      "categoryId": "2",
+      "description": "Compras na padaria",
+      "type": "expense",
+      "amount": 3500,
+      "dueDate": "2026-11-09",
+      "paymentDate": "2026-11-09",
+      "status": "paid",
+      "notes": ""
+    },
+    {
+      "id": "6",
+      "userId": "1",
+      "accountId": "1",
+      "categoryId": "1",
+      "description": "Renda extra",
+      "type": "income",
+      "amount": 85000,
+      "dueDate": "2026-11-10",
+      "paymentDate": null,
+      "status": "pending",
       "notes": ""
     }
   ],
@@ -99,7 +151,14 @@
       "userId": "1",
       "categoryId": "2",
       "month": "2026-11",
-      "limit": 1000
+      "limit": 100000
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "categoryId": "3",
+      "month": "2026-11",
+      "limit": 200000
     }
   ],
   "goals": [
@@ -107,8 +166,8 @@
       "id": "1",
       "userId": "1",
       "name": "Reserva de emergência",
-      "targetAmount": 10000,
-      "currentAmount": 2000,
+      "targetAmount": 1000000,
+      "currentAmount": 200000,
       "deadline": "2027-12-31",
       "status": "active"
     }

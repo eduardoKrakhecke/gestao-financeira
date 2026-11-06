@@ -1,23 +1,163 @@
-<app-page-header
-  eyebrow="Visão geral"
-  title="Dashboard"
-  description="Acompanhe sua vida financeira em um só lugar."
-></app-page-header>
+<div class="dashboard">
 
-<section class="stats-grid" aria-label="Resumo financeiro">
-  @for (stat of stats; track stat.label) {
-    <app-stat-card
-      [label]="stat.label"
-      [value]="stat.value"
-      [description]="stat.description"
-    ></app-stat-card>
+  <header class="dashboard__header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Acompanhe sua vida financeira.</p>
+    </div>
+
+    <div class="dashboard__actions">
+      <select
+        class="period-select"
+        [value]="period()"
+        (change)="changePeriod($any($event.target).value)"
+        aria-label="Filtrar período do Dashboard"
+      >
+        <option value="current-month">Este mês</option>
+        <option value="last-3-months">Últimos 3 meses</option>
+        <option value="last-6-months">Últimos 6 meses</option>
+        <option value="current-year">Este ano</option>
+      </select>
+
+      <button
+        class="btn-refresh"
+        type="button"
+        (click)="loadDashboard()"
+        [disabled]="loading()"
+      >
+        {{ loading() ? 'Atualizando...' : 'Atualizar dados' }}
+      </button>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="dashboard__feedback">
+      Carregando informações financeiras...
+    </div>
+  } @else if (error()) {
+    <div class="dashboard__error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" (click)="loadDashboard()">
+        Tentar novamente
+      </button>
+    </div>
+  } @else {
+    @if (summary(); as data) {
+
+    <section class="dashboard__cards">
+
+      <article class="stat-card">
+        <span class="stat-card__label">Saldo atual</span>
+        <strong>{{ formatCurrency(data.totalBalance) }}</strong>
+        <span class="stat-card__description">Todas as contas ativas</span>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-card__label">Receitas do mês</span>
+        <strong class="text-success">
+          {{ formatCurrency(data.monthlyIncome) }}
+        </strong>
+        <span class="stat-card__description">Receitas já recebidas</span>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-card__label">Despesas do mês</span>
+        <strong class="text-danger">
+          {{ formatCurrency(data.monthlyExpenses) }}
+        </strong>
+        <span class="stat-card__description">Despesas já pagas</span>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-card__label">Saldo projetado</span>
+        <strong>{{ formatCurrency(data.projectedBalance) }}</strong>
+        <span class="stat-card__description">Considerando pendências</span>
+      </article>
+
+    </section>
+
+      <app-dashboard-charts
+        [summary]="dashboardData()!"
+      />
+
+    <section class="dashboard__details">
+
+      <article class="dashboard-panel">
+        <h2>Contas financeiras</h2>
+
+        @for (account of data.accounts; track account.id) {
+          <div class="account-row">
+            <span
+              class="account-row__color"
+              [style.background]="account.color"
+            ></span>
+
+            <span class="account-row__name">{{ account.name }}</span>
+
+            <strong>{{ formatCurrency(account.balance) }}</strong>
+          </div>
+        } @empty {
+          <p>Nenhuma conta cadastrada.</p>
+        }
+      </article>
+
+      <article class="dashboard-panel">
+        <h2>Despesas por categoria</h2>
+
+        @for (category of data.categories; track category.categoryId) {
+          <div class="category-row">
+            <div class="category-row__header">
+              <span>{{ category.name }}</span>
+              <strong>{{ formatCurrency(category.total) }}</strong>
+            </div>
+
+            <div class="progress-track">
+              <div
+                class="progress-track__bar"
+                [style.width.%]="category.percentage"
+                [style.background]="category.color"
+              ></div>
+            </div>
+
+            <small>{{ category.percentage | number:'1.0-1' }}%</small>
+          </div>
+        } @empty {
+          <p>Não existem despesas pagas neste mês.</p>
+        }
+      </article>
+
+    </section>
+
+    <section class="dashboard-panel dashboard__transactions">
+      <h2>Movimentações recentes</h2>
+
+      @for (transaction of data.recentTransactions; track transaction.id) {
+        <div class="transaction-row">
+          <div>
+            <strong>{{ transaction.description }}</strong>
+            <small>
+              {{ transaction.dueDate | date:'dd/MM/yyyy' }}
+            </small>
+          </div>
+
+          <div class="transaction-row__value">
+            <strong
+              [class.text-success]="transaction.type === 'income'"
+              [class.text-danger]="transaction.type === 'expense'"
+            >
+              {{ transaction.type === 'income' ? '+' : '-' }}
+              {{ formatCurrency(transaction.amount) }}
+            </strong>
+
+            <small>{{ transaction.status }}</small>
+          </div>
+        </div>
+      } @empty {
+        <p>Nenhuma movimentação encontrada.</p>
+      }
+    </section>
+
+    }
   }
-</section>
 
-<section class="welcome-card">
-  <span class="welcome-icon" aria-hidden="true">+</span>
-  <div>
-    <h2>Comece organizando suas finanças</h2>
-    <p>As próximas features vão trazer contas, transações, metas e relatórios.</p>
-  </div>
-</section>
+</div>
