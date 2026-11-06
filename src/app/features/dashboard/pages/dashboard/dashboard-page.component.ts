@@ -25,6 +25,8 @@ export class DashboardPageComponent {
 
   readonly dashboardData = computed(() => this.summary());
 
+  readonly Math = Math;
+
   ngOnInit(): void {
     this.loadDashboard();
   }

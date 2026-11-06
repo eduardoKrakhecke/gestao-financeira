@@ -68,7 +68,7 @@ export interface DashboardSummary {
   accounts: DashboardAccountSummary[];
   categories: DashboardCategorySummary[];
   recentTransactions: DashboardTransaction[];
-  budgets: DashboardBudget[];
+  budgets: DashboardBudgetSummary[];
   monthlyEvolution: MonthlyEvolution[];
 }
 
@@ -83,3 +83,15 @@ export type DashboardPeriod =
   | 'last-3-months'
   | 'last-6-months'
   | 'current-year';
+
+export interface DashboardBudgetSummary {
+  id: string;
+  categoryId: string;
+  categoryName: string;
+  color: string;
+  limit: number;
+  spent: number;
+  remaining: number;
+  percentage: number;
+  status: 'normal' | 'warning' | 'exceeded';
+}

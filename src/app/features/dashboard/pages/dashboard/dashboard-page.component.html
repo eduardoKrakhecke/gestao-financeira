@@ -127,7 +127,88 @@
       </article>
 
     </section>
+      <section class="dashboard-panel dashboard__budgets">
 
+        <div class="dashboard__section-header">
+          <div>
+            <h2>Orçamentos mensais</h2>
+            <p>Acompanhe seus limites de gastos por categoria.</p>
+          </div>
+        </div>
+
+        @for (budget of dashboardData()!.budgets; track budget.id) {
+
+          <div class="budget-item">
+
+            <div class="budget-item__header">
+
+              <div class="budget-item__category">
+          <span
+            class="budget-item__color"
+            [style.background]="budget.color"
+          ></span>
+
+                <strong>{{ budget.categoryName }}</strong>
+              </div>
+
+              <span
+                class="budget-item__status"
+                [class.budget-item__status--warning]="budget.status === 'warning'"
+                [class.budget-item__status--exceeded]="budget.status === 'exceeded'"
+              >
+          @if (budget.status === 'exceeded') {
+            Limite ultrapassado
+          } @else if (budget.status === 'warning') {
+            Atenção
+          } @else {
+            Dentro do limite
+          }
+        </span>
+
+            </div>
+
+            <div class="budget-item__values">
+        <span>
+          {{ formatCurrency(budget.spent) }}
+          <small>utilizados</small>
+        </span>
+
+              <span>
+          Limite: {{ formatCurrency(budget.limit) }}
+        </span>
+            </div>
+
+            <div class="budget-progress">
+              <div
+                class="budget-progress__bar"
+                [class.budget-progress__bar--warning]="budget.status === 'warning'"
+                [class.budget-progress__bar--exceeded]="budget.status === 'exceeded'"
+                [style.width.%]="Math.min(budget.percentage, 100)"
+                [style.background]="budget.status === 'normal' ? budget.color : null"
+              ></div>
+            </div>
+
+            <div class="budget-item__footer">
+              <span>{{ budget.percentage | number:'1.0-1' }}% utilizado</span>
+
+              <strong
+                [class.text-danger]="budget.remaining < 0"
+                [class.text-success]="budget.remaining >= 0"
+              >
+                {{ budget.remaining >= 0 ? 'Disponível: ' : 'Excedido em: ' }}
+                {{ formatCurrency(Math.abs(budget.remaining)) }}
+              </strong>
+            </div>
+
+          </div>
+
+        } @empty {
+          <p class="budget-empty">
+            Nenhum orçamento cadastrado para este mês.
+          </p>
+        }
+
+      </section>
     <section class="dashboard-panel dashboard__transactions">
       <h2>Movimentações recentes</h2>
 

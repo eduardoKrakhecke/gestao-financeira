@@ -1,3 +1,4 @@
+
 import { Injectable, inject } from '@angular/core';
 import {
   forkJoin,
@@ -12,6 +13,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 import {
   DashboardAccount,
   DashboardBudget,
+  DashboardBudgetSummary,
   DashboardCategory,
   DashboardPeriod,
   DashboardSummary,
@@ -87,7 +89,7 @@ export class DashboardService {
       return date >= startDate && date <= endDate;
     };
 
-    // Separa as transações pagas e pendentes.
+    // Separa transações pagas e pendentes.
     // Transações canceladas não entram nos cálculos.
     const paidTransactions = transactions.filter(
       transaction => transaction.status === 'paid'
@@ -107,7 +109,7 @@ export class DashboardService {
       transaction => isInsidePeriod(transaction.dueDate)
     );
 
-    // Soma receitas ou despesas.
+    // Função para somar receitas ou despesas.
     const sumByType = (
       items: DashboardTransaction[],
       type: 'income' | 'expense'
@@ -128,7 +130,6 @@ export class DashboardService {
         0
       );
 
-    // Saldo atual considera todas as movimentações pagas.
     const totalPaidIncome = sumByType(
       paidTransactions,
       'income'
@@ -144,7 +145,7 @@ export class DashboardService {
       totalPaidIncome -
       totalPaidExpenses;
 
-    // Receitas e despesas pendentes dentro do período.
+    // Pendências dentro do período selecionado.
     const pendingIncome = sumByType(
       periodPendingTransactions,
       'income'
@@ -160,7 +161,7 @@ export class DashboardService {
       pendingIncome -
       pendingExpenses;
 
-    // Receitas e despesas pagas dentro do período.
+    // Receitas e despesas pagas no período.
     const monthlyIncome = sumByType(
       periodPaidTransactions,
       'income'
@@ -171,7 +172,7 @@ export class DashboardService {
       'expense'
     );
 
-    // Calcula o saldo individual de cada conta.
+    // Calcula o saldo individual das contas.
     const accountSummaries = accounts
       .filter(account => account.active)
       .map(account => {
@@ -198,7 +199,7 @@ export class DashboardService {
         };
       });
 
-    // Calcula despesas por categoria no período selecionado.
+    // Calcula despesas por categoria no período.
     const expenseByCategory = categories
       .filter(category => category.type === 'expense')
       .map(category => {
@@ -235,6 +236,56 @@ export class DashboardService {
         : 0
     }));
 
+    // Calcula o consumo dos orçamentos do mês atual.
+    const currentMonthTransactions = paidTransactions.filter(
+      transaction =>
+        transaction.paymentDate?.startsWith(currentMonth)
+    );
+
+    const budgetSummaries: DashboardBudgetSummary[] = budgets
+      .filter(budget => budget.month === currentMonth)
+      .map(budget => {
+
+        const category = categories.find(
+          item => item.id === budget.categoryId
+        );
+
+        const spent = currentMonthTransactions
+          .filter(
+            transaction =>
+              transaction.type === 'expense' &&
+              transaction.categoryId === budget.categoryId
+          )
+          .reduce(
+            (total, transaction) => total + transaction.amount,
+            0
+          );
+
+        const percentage = budget.limit > 0
+          ? (spent / budget.limit) * 100
+          : 0;
+
+        let status: 'normal' | 'warning' | 'exceeded' = 'normal';
+
+        if (percentage >= 100) {
+          status = 'exceeded';
+        } else if (percentage >= 80) {
+          status = 'warning';
+        }
+
+        return {
+          id: budget.id,
+          categoryId: budget.categoryId,
+          categoryName: category?.name ?? 'Categoria não encontrada',
+          color: category?.color ?? '#9ca3af',
+          limit: budget.limit,
+          spent,
+          remaining: budget.limit - spent,
+          percentage,
+          status
+        };
+      });
+
     // Ordena as movimentações recentes dentro do período.
     const recentTransactions = transactions
       .filter(transaction =>
@@ -250,7 +301,7 @@ export class DashboardService {
       })
       .slice(0, 5);
 
-    // Retorna o resumo completo.
+    // Retorna todos os indicadores do Dashboard.
     return {
       totalBalance,
       projectedBalance,
@@ -261,16 +312,14 @@ export class DashboardService {
       accounts: accountSummaries,
       categories: categorySummaries,
       recentTransactions,
-      budgets: budgets.filter(
-        budget => budget.month === currentMonth
-      ),
+      budgets: budgetSummaries,
       monthlyEvolution: this.calculateMonthlyEvolution(
         transactions
       )
     };
   }
 
-  // Calcula a evolução financeira dos últimos seis meses.
+  // Evolução financeira dos últimos seis meses.
   private calculateMonthlyEvolution(
     transactions: DashboardTransaction[]
   ): MonthlyEvolution[] {
@@ -323,7 +372,7 @@ export class DashboardService {
     return result;
   }
 
-  // Define as datas inicial e final conforme o filtro selecionado.
+  // Define o intervalo de datas do filtro selecionado.
   private getPeriodDates(
     period: DashboardPeriod
   ): {
