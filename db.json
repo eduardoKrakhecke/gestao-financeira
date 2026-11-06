@@ -1,0 +1,110 @@
+
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Eduardo",
+      "email": "eduardo@example.com",
+      "password": "demo-only",
+      "avatar": null,
+      "createdAt": "2026-11-05T12:00:00.000Z"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "1",
+      "userId": "1",
+      "name": "Conta Principal",
+      "type": "checking",
+      "initialBalance": 5000,
+      "currency": "BRL",
+      "color": "#2563eb",
+      "active": true
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "name": "Carteira",
+      "type": "cash",
+      "initialBalance": 500,
+      "currency": "BRL",
+      "color": "#16a34a",
+      "active": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "userId": "1",
+      "name": "Salário",
+      "type": "income",
+      "color": "#16a34a",
+      "icon": "wallet"
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "name": "Alimentação",
+      "type": "expense",
+      "color": "#f97316",
+      "icon": "utensils"
+    },
+    {
+      "id": "3",
+      "userId": "1",
+      "name": "Moradia",
+      "type": "expense",
+      "color": "#8b5cf6",
+      "icon": "house"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "1",
+      "userId": "1",
+      "accountId": "1",
+      "categoryId": "1",
+      "description": "Salário mensal",
+      "type": "income",
+      "amount": 6500,
+      "dueDate": "2026-11-05",
+      "paymentDate": "2026-11-05",
+      "status": "paid",
+      "notes": ""
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "accountId": "1",
+      "categoryId": "2",
+      "description": "Supermercado",
+      "type": "expense",
+      "amount": 450,
+      "dueDate": "2026-11-05",
+      "paymentDate": "2026-11-05",
+      "status": "paid",
+      "notes": ""
+    }
+  ],
+  "budgets": [
+    {
+      "id": "1",
+      "userId": "1",
+      "categoryId": "2",
+      "month": "2026-11",
+      "limit": 1000
+    }
+  ],
+  "goals": [
+    {
+      "id": "1",
+      "userId": "1",
+      "name": "Reserva de emergência",
+      "targetAmount": 10000,
+      "currentAmount": 2000,
+      "deadline": "2027-12-31",
+      "status": "active"
+    }
+  ],
+  "transfers": []
+}
