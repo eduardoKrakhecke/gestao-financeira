@@ -1,0 +1,104 @@
+
+<div class="form-content">
+  <div class="form-heading">
+    <h2>{{ category ? 'Editar categoria' : 'Nova categoria' }}</h2>
+    <p>Preencha os dados da categoria financeira.</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label class="form-field">
+      Nome da categoria
+
+      <input
+        type="text"
+        formControlName="name"
+        placeholder="Ex.: Alimentação"
+        maxlength="40"
+      />
+
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+        <small class="field-error">
+          Informe um nome entre 2 e 40 caracteres.
+        </small>
+      }
+    </label>
+
+    <label class="form-field">
+      Tipo de categoria
+
+      <select formControlName="type">
+        <option value="expense">Despesa</option>
+        <option value="income">Receita</option>
+      </select>
+    </label>
+
+    <label class="form-field">
+      Ícone
+
+      <select formControlName="icon">
+        @for (icon of icons; track icon.value) {
+          <option [value]="icon.value">{{ icon.label }}</option>
+        }
+      </select>
+    </label>
+
+    <div class="form-field">
+      <span>Cor da categoria</span>
+
+      <div class="color-options">
+        @for (color of colors; track color) {
+          <button
+            type="button"
+            class="color-option"
+            [style.background]="color"
+            [class.selected]="form.controls.color.value === color"
+            [attr.aria-label]="'Selecionar cor ' + color"
+            [attr.aria-pressed]="form.controls.color.value === color"
+            (click)="form.controls.color.setValue(color)"
+          ></button>
+        }
+
+        <label class="custom-color">
+          <input type="color" formControlName="color" />
+          <span>Personalizar</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="category-preview">
+      <span
+        class="preview-icon"
+        [style.background]="form.controls.color.value + '20'"
+        [style.color]="form.controls.color.value"
+      >
+        {{ form.controls.icon.value }}
+      </span>
+
+      <div>
+        <strong>{{ form.controls.name.value || 'Nome da categoria' }}</strong>
+        <small>
+          {{ form.controls.type.value === 'income' ? 'Receita' : 'Despesa' }}
+        </small>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-outline"
+        (click)="cancel.emit()"
+        [disabled]="saving"
+      >
+        Cancelar
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="saving"
+      >
+        {{ saving ? 'Salvando...' : category ? 'Salvar alterações' : 'Criar categoria' }}
+      </button>
+    </div>
+  </form>
+</div>

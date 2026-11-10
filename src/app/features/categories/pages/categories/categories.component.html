@@ -1,0 +1,223 @@
+
+<div class="categories-page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">ORGANIZAÇÃO FINANCEIRA</span>
+      <h1>Categorias</h1>
+      <p>Organize suas receitas e despesas para acompanhar melhor suas finanças.</p>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="openCreate()"
+    >
+      <span class="plus-icon">+</span>
+      Nova categoria
+    </button>
+  </header>
+
+  @if (success()) {
+    <div class="feedback success">{{ success() }}</div>
+  }
+
+  @if (error()) {
+    <div class="feedback error">{{ error() }}</div>
+  }
+
+  <section class="summary-grid">
+    <article class="summary-card">
+      <div class="summary-icon total-icon">#</div>
+      <div>
+        <span>Total de categorias</span>
+        <strong>{{ categories().length }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon income-icon">↗</div>
+      <div>
+        <span>Categorias de receita</span>
+        <strong>{{ incomeCount() }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon expense-icon">↘</div>
+      <div>
+        <span>Categorias de despesa</span>
+        <strong>{{ expenseCount() }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <section class="categories-panel">
+    <div class="toolbar">
+      <div class="search-field">
+        <span>⌕</span>
+        <input
+          type="search"
+          placeholder="Buscar categoria..."
+          [value]="search()"
+          (input)="setSearch($any($event.target).value)"
+        />
+      </div>
+
+      <select
+        class="type-filter"
+        [value]="filterType()"
+        (change)="setFilter($any($event.target).value)"
+        aria-label="Filtrar por tipo"
+      >
+        <option value="all">Todas as categorias</option>
+        <option value="income">Receitas</option>
+        <option value="expense">Despesas</option>
+      </select>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Carregando categorias...</p>
+      </div>
+    } @else if (filteredCategories().length > 0) {
+      <div class="categories-grid">
+        @for (category of filteredCategories(); track category.id) {
+          <article class="category-card">
+            <div class="category-main">
+              <div
+                class="category-icon"
+                [style.background]="category.color + '20'"
+                [style.color]="category.color"
+              >
+                {{ getIconLabel(category.icon).charAt(0) }}
+              </div>
+
+              <div class="category-details">
+                <strong>{{ category.name }}</strong>
+                <span>{{ getIconLabel(category.icon) }}</span>
+              </div>
+            </div>
+
+            <div class="category-footer">
+              <span
+                class="type-badge"
+                [class.income]="category.type === 'income'"
+                [class.expense]="category.type === 'expense'"
+              >
+                {{ category.type === 'income' ? 'Receita' : 'Despesa' }}
+              </span>
+
+              <div class="category-actions">
+                <button
+                  type="button"
+                  class="icon-button"
+                  title="Editar categoria"
+                  aria-label="Editar categoria"
+                  (click)="openEdit(category)"
+                >
+                  <span>✎</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="icon-button delete"
+                  title="Excluir categoria"
+                  aria-label="Excluir categoria"
+                  (click)="askDelete(category)"
+                >
+                  <span>×</span>
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <div class="empty-icon">◇</div>
+
+        @if (search() || filterType() !== 'all') {
+          <h3>Nenhuma categoria encontrada</h3>
+          <p>Tente alterar os filtros ou o termo da pesquisa.</p>
+        } @else {
+          <h3>Você ainda não possui categorias</h3>
+          <p>Crie categorias para organizar suas receitas e despesas.</p>
+
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="openCreate()"
+          >
+            Criar primeira categoria
+          </button>
+        }
+      </div>
+    }
+  </section>
+</div>
+
+@if (formVisible()) {
+  <div class="modal-backdrop" (click)="closeForm()">
+    <section
+      class="modal-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Formulário de categoria"
+      (click)="$event.stopPropagation()"
+    >
+      <app-category-form
+        [category]="selectedCategory()"
+        [saving]="saving()"
+        (save)="saveCategory($event)"
+        (cancel)="closeForm()"
+      />
+    </section>
+  </div>
+}
+
+@if (deletingCategory(); as category) {
+  <div class="modal-backdrop" (click)="cancelDelete()">
+    <section
+      class="confirm-dialog"
+      role="alertdialog"
+      aria-modal="true"
+      aria-label="Confirmar exclusão"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="confirm-icon">!</div>
+
+      <h2>Excluir categoria?</h2>
+
+      <p>
+        Você está prestes a excluir a categoria
+        <strong>{{ category.name }}</strong>.
+        Essa ação não poderá ser desfeita.
+      </p>
+
+      <p class="confirm-note">
+        Categorias vinculadas a transações ou orçamentos não podem ser excluídas.
+      </p>
+
+      <div class="confirm-actions">
+        <button
+          type="button"
+          class="btn btn-outline"
+          (click)="cancelDelete()"
+          [disabled]="deleting()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger"
+          (click)="confirmDelete()"
+          [disabled]="deleting()"
+        >
+          {{ deleting() ? 'Excluindo...' : 'Confirmar exclusão' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}

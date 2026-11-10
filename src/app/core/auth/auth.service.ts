@@ -84,6 +84,13 @@ export class AuthService {
     );
   }
 
+
+  updateCurrentUser(user: AuthUser): void {
+    this.storage.set('auth_user', JSON.stringify(user));
+    this.userState.set(user);
+  }
+
+
   logout(): void {
     this.storage.remove('auth_token');
     this.storage.remove('auth_user');

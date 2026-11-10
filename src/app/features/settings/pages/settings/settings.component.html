@@ -1,0 +1,326 @@
+
+<div class="settings-page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">PERSONALIZAÇÃO</span>
+      <h1>Configurações</h1>
+      <p>Gerencie seu perfil, preferências e segurança.</p>
+    </div>
+  </header>
+
+  @if (successMessage()) {
+    <div class="feedback success">
+      {{ successMessage() }}
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="feedback error">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <div class="settings-layout">
+    <aside class="settings-sidebar">
+      <div class="user-summary">
+        <div class="avatar">
+          @if (user()?.avatar) {
+            <img [src]="user()?.avatar" alt="Foto do perfil" />
+          } @else {
+            {{ getUserInitials()  }}
+          }
+        </div>
+
+        <div>
+          <strong>{{ user()?.name }}</strong>
+          <small>{{ user()?.email }}</small>
+        </div>
+      </div>
+
+      <nav class="settings-nav">
+        <button
+          type="button"
+          [class.active]="activeTab() === 'profile'"
+          (click)="selectTab('profile')"
+        >
+          <span>♙</span>
+          Meu perfil
+        </button>
+
+        <button
+          type="button"
+          [class.active]="activeTab() === 'appearance'"
+          (click)="selectTab('appearance')"
+        >
+          <span>◐</span>
+          Aparência
+        </button>
+
+        <button
+          type="button"
+          [class.active]="activeTab() === 'preferences'"
+          (click)="selectTab('preferences')"
+        >
+          <span>⚙</span>
+          Preferências
+        </button>
+
+        <button
+          type="button"
+          [class.active]="activeTab() === 'security'"
+          (click)="selectTab('security')"
+        >
+          <span>♧</span>
+          Segurança
+        </button>
+      </nav>
+
+      <button type="button" class="logout-button" (click)="logout()">
+        <span>↪</span>
+        Sair da conta
+      </button>
+    </aside>
+
+    <main class="settings-content">
+      @if (activeTab() === 'profile') {
+        <section class="settings-card">
+          <div class="section-heading">
+            <h2>Meu perfil</h2>
+            <p>Atualize as informações da sua conta.</p>
+          </div>
+
+          <div class="profile-avatar">
+            <div class="avatar large">
+              @if (avatarPreview()) {
+                <img [src]="avatarPreview()" alt="Foto do perfil" />
+              } @else {
+                {{ getUserInitials()  }}
+              }
+            </div>
+
+            <div class="profile-avatar__content">
+              <strong>{{ user()?.name }}</strong>
+              <div class="avatar-actions">
+                <input
+                  #avatarInput
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  hidden
+                  (change)="onAvatarSelected($event)"
+                />
+
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  [disabled]="savingProfile()"
+                  (click)="avatarInput.click()"
+                >
+                  Escolher foto
+                </button>
+
+                @if (avatarPreview()) {
+                  <button
+                    type="button"
+                    class="avatar-remove"
+                    [disabled]="savingProfile()"
+                    (click)="removeAvatar()"
+                  >
+                    Remover
+                  </button>
+                }
+              </div>
+
+              <small class="avatar-hint">PNG, JPG ou WEBP, até 2 MB.</small>
+              <p>Informações da conta FinanceFlow</p>
+            </div>
+          </div>
+
+          <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+            <div class="form-grid">
+              <label class="form-field">
+                Nome completo
+                <input type="text" formControlName="name" placeholder="Seu nome" />
+
+                @if (profileForm.controls.name.touched && profileForm.controls.name.invalid) {
+                  <small class="field-error">Informe um nome com pelo menos 2 caracteres.</small>
+                }
+              </label>
+
+              <label class="form-field">
+                E-mail
+                <input type="email" formControlName="email" placeholder="seu@email.com" />
+
+                @if (profileForm.controls.email.touched && profileForm.controls.email.invalid) {
+                  <small class="field-error">Informe um e-mail válido.</small>
+                }
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="savingProfile()">
+                {{ savingProfile() ? 'Salvando...' : 'Salvar alterações' }}
+              </button>
+            </div>
+          </form>
+        </section>
+      }
+
+      @if (activeTab() === 'appearance') {
+        <section class="settings-card">
+          <div class="section-heading">
+            <h2>Aparência</h2>
+            <p>Escolha como deseja visualizar o FinanceFlow.</p>
+          </div>
+
+          <div class="theme-options">
+            <button
+              type="button"
+              class="theme-option"
+              [class.selected]="theme() === 'light'"
+              (click)="changeTheme('light')"
+            >
+              <div class="theme-preview light-preview">
+                <div class="preview-sidebar"></div>
+                <div class="preview-content">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+
+              <div class="theme-label">
+                <strong>Tema claro</strong>
+                @if (theme() === 'light') {
+                  <span class="selected-label">Ativo</span>
+                }
+              </div>
+            </button>
+
+            <button
+              type="button"
+              class="theme-option"
+              [class.selected]="theme() === 'dark'"
+              (click)="changeTheme('dark')"
+            >
+              <div class="theme-preview dark-preview">
+                <div class="preview-sidebar"></div>
+                <div class="preview-content">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+
+              <div class="theme-label">
+                <strong>Tema escuro</strong>
+                @if (theme() === 'dark') {
+                  <span class="selected-label">Ativo</span>
+                }
+              </div>
+            </button>
+          </div>
+        </section>
+      }
+
+      @if (activeTab() === 'preferences') {
+        <section class="settings-card">
+          <div class="section-heading">
+            <h2>Preferências</h2>
+            <p>Configure os padrões de exibição dos seus dados.</p>
+          </div>
+
+          <div class="form-grid">
+            <label class="form-field">
+              Moeda
+              <select disabled>
+                <option value="BRL">Real brasileiro (BRL)</option>
+              </select>
+              <small>A moeda padrão do FinanceFlow é BRL.</small>
+            </label>
+
+            <label class="form-field">
+              Idioma
+              <select disabled>
+                <option value="pt-BR">Português (Brasil)</option>
+              </select>
+              <small>O idioma atual da aplicação é português.</small>
+            </label>
+
+            <label class="form-field">
+              Formato de data
+              <select
+                [value]="preferences().dateFormat"
+                (change)="updateDateFormat($any($event.target).value)"
+              >
+                <option value="dd/MM/yyyy">DD/MM/AAAA</option>
+                <option value="MM/dd/yyyy">MM/DD/AAAA</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary" (click)="savePreferences()">
+              Salvar preferências
+            </button>
+          </div>
+        </section>
+      }
+
+      @if (activeTab() === 'security') {
+        <section class="settings-card">
+          <div class="section-heading">
+            <h2>Segurança</h2>
+            <p>Atualize sua senha de acesso.</p>
+          </div>
+
+          <div class="security-warning">
+            <strong>Ambiente demonstrativo</strong>
+            <p>
+              Este projeto utiliza JSON Server. A senha é armazenada sem
+              criptografia e esta funcionalidade não deve ser utilizada
+              como mecanismo de segurança em produção.
+            </p>
+          </div>
+
+          <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+            <div class="form-grid single-column">
+              <label class="form-field">
+                Senha atual
+                <input
+                  type="password"
+                  formControlName="currentPassword"
+                  autocomplete="current-password"
+                />
+              </label>
+
+              <label class="form-field">
+                Nova senha
+                <input
+                  type="password"
+                  formControlName="newPassword"
+                  autocomplete="new-password"
+                />
+                <small>Mínimo de 8 caracteres.</small>
+              </label>
+
+              <label class="form-field">
+                Confirmar nova senha
+                <input
+                  type="password"
+                  formControlName="confirmPassword"
+                  autocomplete="new-password"
+                />
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="savingPassword()">
+                {{ savingPassword() ? 'Atualizando...' : 'Alterar senha' }}
+              </button>
+            </div>
+          </form>
+        </section>
+      }
+    </main>
+  </div>
+</div>

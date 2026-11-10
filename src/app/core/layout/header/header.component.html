@@ -46,7 +46,11 @@
 
     <div class="header__user">
       <span class="header__avatar">
-        {{ userInitials }}
+        @if (currentUser()?.avatar) {
+          <img [src]="currentUser()?.avatar" alt="Foto do perfil" />
+        } @else {
+          {{ userInitials }}
+        }
       </span>
 
       <span class="header__user-info">

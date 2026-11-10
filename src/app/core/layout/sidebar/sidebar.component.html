@@ -144,7 +144,11 @@
   <div class="sidebar__footer">
     <div class="sidebar__profile">
       <div class="sidebar__avatar">
-        {{ userInitials }}
+        @if (currentUser()?.avatar) {
+          <img [src]="currentUser()?.avatar" alt="Foto do perfil" />
+        } @else {
+          {{ userInitials }}
+        }
       </div>
 
       <div class="sidebar__profile-info">
