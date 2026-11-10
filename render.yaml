@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: financeflow
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run serve:ssr:gestao-financeira
+    healthCheckPath: /api/users
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NG_ALLOWED_HOSTS
+        value: financeflow.onrender.com

@@ -4,15 +4,34 @@ import {
   isMainModule,
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
-import express from 'express';
+import express, { type RequestHandler, type Router } from 'express';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createRequire as createNodeRequire } from 'node:module';
+
+interface JsonServerModule {
+  defaults: (options?: { logger?: boolean }) => RequestHandler[];
+  router: (databasePath: string) => Router;
+}
+
+const require = createNodeRequire(import.meta.url);
+const jsonServer = require('json-server') as JsonServerModule;
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+const databasePath = resolve(process.cwd(), 'db.json');
+
+/**
+ * Expose the local JSON Server API under the same Render service.
+ */
+app.use(
+  '/api',
+  ...jsonServer.defaults({ logger: false }),
+  jsonServer.router(databasePath),
+);
 
 /**
  * Example Express Rest API endpoints can be defined here.
@@ -54,8 +73,8 @@ app.use('/**', (req, res, next) => {
  * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
  */
 if (isMainModule(import.meta.url)) {
-  const port = process.env['PORT'] || 4000;
-  app.listen(port, () => {
+  const port = Number(process.env['PORT'] || 4000);
+  app.listen(port, '0.0.0.0', () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
