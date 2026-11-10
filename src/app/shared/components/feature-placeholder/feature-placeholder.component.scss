@@ -1,0 +1,25 @@
+.feature-placeholder {
+  padding: 40px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  color: var(--text-primary);
+  text-align: center;
+}
+
+.feature-placeholder__eyebrow {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.feature-placeholder h1 {
+  margin: 8px 0;
+}
+
+.feature-placeholder p {
+  margin: 0;
+  color: var(--text-secondary);
+}
