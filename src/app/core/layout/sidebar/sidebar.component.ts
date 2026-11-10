@@ -62,7 +62,7 @@ export class SidebarComponent {
       title: 'PLANEJAMENTO',
       items: [
         { label: 'Orçamentos', route: '/budgets', icon: 'budgets' },
-        { label: 'Metas financeiras', route: '/goals', icon: 'goals' },
+        { label: 'Metas financeiras', route: '/pages', icon: 'pages' },
         { label: 'Relatórios', route: '/reports', icon: 'reports' }
       ]
     },

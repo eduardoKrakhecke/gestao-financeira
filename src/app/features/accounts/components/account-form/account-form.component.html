@@ -1,0 +1,92 @@
+<form class="account-form" [formGroup]="form" (ngSubmit)="submit()">
+  <header class="account-form__header">
+    <div>
+      <h2>{{ account ? 'Editar conta' : 'Nova conta' }}</h2>
+      <p>Cadastre uma conta para acompanhar suas movimentações.</p>
+    </div>
+
+    <button
+      type="button"
+      class="close-button"
+      aria-label="Fechar formulário"
+      [disabled]="saving"
+      (click)="cancel.emit()">
+      &times;
+    </button>
+  </header>
+
+  <div class="form-field">
+    <label for="account-name">Nome da conta</label>
+    <input
+      id="account-name"
+      type="text"
+      formControlName="name"
+      placeholder="Ex.: Conta principal"
+      maxlength="60">
+
+    @if (form.controls.name.touched && form.controls.name.invalid) {
+      <small class="form-error">Informe o nome da conta.</small>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="account-type">Tipo de conta</label>
+    <select id="account-type" formControlName="type">
+      @for (type of accountTypes; track type.value) {
+        <option [value]="type.value">{{ type.label }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="form-field">
+    <label for="account-balance">Saldo inicial (R$)</label>
+    <input
+      id="account-balance"
+      type="number"
+      formControlName="initialBalance"
+      min="0"
+      step="0.01"
+      placeholder="0,00">
+
+    @if (
+      form.controls.initialBalance.touched &&
+      form.controls.initialBalance.invalid
+      ) {
+      <small class="form-error">Informe um saldo inicial válido.</small>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="account-currency">Moeda</label>
+    <select id="account-currency" formControlName="currency">
+      <option value="BRL">Real brasileiro (BRL)</option>
+    </select>
+  </div>
+
+  <div class="form-field">
+    <label for="account-color">Cor de identificação</label>
+
+    <div class="color-control">
+      <input
+        id="account-color"
+        type="color"
+        formControlName="color">
+
+      <span>{{ form.controls.color.value }}</span>
+    </div>
+  </div>
+
+  <footer class="account-form__actions">
+    <button
+      type="button"
+      class="btn-secondary"
+      [disabled]="saving"
+      (click)="cancel.emit()">
+      Cancelar
+    </button>
+
+    <button type="submit" class="btn-primary" [disabled]="saving">
+      {{ saving ? 'Salvando...' : (account ? 'Salvar alterações' : 'Cadastrar conta') }}
+    </button>
+  </footer>
+</form>

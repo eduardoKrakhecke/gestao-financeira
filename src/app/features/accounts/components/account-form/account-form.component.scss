@@ -1,0 +1,122 @@
+:host {
+  display: block;
+}
+
+.account-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+
+    h2 {
+      margin: 0 0 6px;
+      color: var(--text-primary);
+      font-size: 1.25rem;
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  input:not([type='color']),
+  select {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--surface-color);
+    color: var(--text-primary);
+    font: inherit;
+
+    &:focus {
+      outline: 2px solid var(--primary-color);
+      outline-offset: 1px;
+    }
+  }
+}
+
+.color-control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+
+  input {
+    width: 48px;
+    height: 40px;
+    padding: 3px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: var(--surface-color);
+    cursor: pointer;
+  }
+}
+
+.form-error {
+  color: #dc2626;
+  font-size: 0.8rem;
+}
+
+.close-button {
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.7rem;
+  cursor: pointer;
+}
+
+.btn-primary,
+.btn-secondary {
+  min-height: 42px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  border: 1px solid var(--primary-color);
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.btn-secondary {
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-primary);
+}

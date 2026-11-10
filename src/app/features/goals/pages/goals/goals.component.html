@@ -1,0 +1,195 @@
+<section class="goals-page">
+  <header class="page-header">
+    <div>
+      <h1>Metas financeiras</h1>
+      <p>Planeje seus objetivos e acompanhe suas conquistas.</p>
+    </div>
+
+    <button type="button" class="btn-primary" (click)="openCreateForm()">
+      + Nova meta
+    </button>
+  </header>
+
+  @if (error()) {
+    <div class="error-message" role="alert">
+      {{ error() }}
+    </div>
+  }
+
+  <div class="goals-overview">
+    <article class="overview-card">
+      <span>Total de metas</span>
+      <strong>{{ totalGoals() }}</strong>
+    </article>
+
+    <article class="overview-card">
+      <span>Em andamento</span>
+      <strong>{{ activeGoals() }}</strong>
+    </article>
+
+    <article class="overview-card">
+      <span>Concluídas</span>
+      <strong>{{ completedGoals() }}</strong>
+    </article>
+
+    <article class="overview-card">
+      <span>Atrasadas</span>
+      <strong>{{ overdueGoals() }}</strong>
+    </article>
+  </div>
+
+  <div class="goals-totals">
+    <div>
+      <span>Valor total dos objetivos</span>
+      <strong>{{ formatCurrency(totalTarget()) }}</strong>
+    </div>
+
+    <div>
+      <span>Valor acumulado</span>
+      <strong>{{ formatCurrency(totalAccumulated()) }}</strong>
+    </div>
+  </div>
+
+  <div class="goals-toolbar">
+    <label for="goal-status-filter">Filtrar por situação</label>
+
+    <select
+      id="goal-status-filter"
+      [value]="filter()"
+      (change)="changeFilter($any($event.target).value)">
+      <option value="all">Todas</option>
+      <option value="active">Em andamento</option>
+      <option value="completed">Concluídas</option>
+      <option value="overdue">Atrasadas</option>
+    </select>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state">Carregando metas...</div>
+  } @else if (filteredGoals().length === 0) {
+    <div class="empty-state">
+      <h2>Nenhuma meta encontrada</h2>
+      <p>Cadastre uma meta ou selecione outro filtro.</p>
+      <button type="button" class="btn-primary" (click)="openCreateForm()">
+        Criar meta
+      </button>
+    </div>
+  } @else {
+    <div class="goals-grid">
+      @for (goal of filteredGoals(); track goal.id) {
+        <article class="goal-card">
+          <div class="goal-card__header">
+            <h2>{{ goal.name }}</h2>
+
+            <span
+              class="goal-status"
+              [class.goal-status--completed]="goal.calculatedStatus === 'completed'"
+              [class.goal-status--overdue]="goal.calculatedStatus === 'overdue'">
+              @switch (goal.calculatedStatus) {
+                @case ('completed') { Concluída }
+                @case ('overdue') { Atrasada }
+                @default { Em andamento }
+              }
+            </span>
+          </div>
+
+          <div class="goal-card__amounts">
+            <div>
+              <span>Acumulado</span>
+              <strong>{{ formatCurrency(goal.currentAmount) }}</strong>
+            </div>
+
+            <div>
+              <span>Objetivo</span>
+              <strong>{{ formatCurrency(goal.targetAmount) }}</strong>
+            </div>
+          </div>
+
+          <div
+            class="goal-progress"
+            role="progressbar"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [attr.aria-valuenow]="Math.min(goal.percentage, 100)"
+            [attr.aria-label]="'Progresso da meta ' + goal.name">
+            <div
+              class="goal-progress__fill"
+              [class.goal-progress__fill--completed]="goal.calculatedStatus === 'completed'"
+              [class.goal-progress__fill--overdue]="goal.calculatedStatus === 'overdue'"
+              [style.width.%]="Math.min(goal.percentage, 100)">
+            </div>
+          </div>
+
+          <div class="goal-card__progress-info">
+            <span>{{ goal.percentage | number:'1.0-1' }}% alcançado</span>
+            <span>Faltam {{ formatCurrency(goal.remaining) }}</span>
+          </div>
+
+          <p class="goal-card__deadline">
+            Prazo: {{ formatDate(goal.deadline) }}
+          </p>
+
+          <footer class="goal-card__actions">
+            @if (deletingId() === goal.id) {
+              <span>Excluir esta meta?</span>
+
+              <button
+                type="button"
+                class="btn-danger"
+                [disabled]="deleting()"
+                (click)="confirmDelete(goal.id)">
+                Confirmar
+              </button>
+
+              <button
+                type="button"
+                class="btn-secondary"
+                [disabled]="deleting()"
+                (click)="cancelDelete()">
+                Cancelar
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="openEditForm(goal)">
+                Editar
+              </button>
+
+              <button
+                type="button"
+                class="btn-danger"
+                (click)="askDelete(goal.id)">
+                Excluir
+              </button>
+            }
+          </footer>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+@if (formVisible()) {
+  <div class="modal-backdrop">
+    <section
+      class="goal-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Formulário de meta financeira">
+
+      @if (error()) {
+        <div class="error-message" role="alert">
+          {{ error() }}
+        </div>
+      }
+
+      <app-goal-form
+        [goal]="selectedGoal()"
+        [saving]="saving()"
+        (save)="saveGoal($event)"
+        (cancel)="closeForm()">
+      </app-goal-form>
+    </section>
+  </div>
+}

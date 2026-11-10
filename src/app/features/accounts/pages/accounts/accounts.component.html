@@ -1,0 +1,182 @@
+<section class="accounts-page">
+  <header class="page-header">
+    <div>
+      <h1>Minhas contas</h1>
+      <p>Gerencie suas contas e acompanhe seus saldos.</p>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      (click)="openCreateForm()">
+      + Nova conta
+    </button>
+  </header>
+
+  @if (error()) {
+    <div class="error-message" role="alert">
+      {{ error() }}
+    </div>
+  }
+
+  <div class="accounts-overview">
+    <article class="overview-card overview-card--primary">
+      <span>Saldo total</span>
+      <strong>{{ formatCurrency(totalBalance()) }}</strong>
+      <small>Somatório dos saldos das contas ativas</small>
+    </article>
+
+    <article class="overview-card">
+      <span>Receitas acumuladas</span>
+      <strong class="income-value">{{ formatCurrency(totalIncome()) }}</strong>
+    </article>
+
+    <article class="overview-card">
+      <span>Despesas acumuladas</span>
+      <strong class="expense-value">{{ formatCurrency(totalExpenses()) }}</strong>
+    </article>
+
+    <article class="overview-card">
+      <span>Contas ativas</span>
+      <strong>{{ activeAccounts().length }}</strong>
+    </article>
+  </div>
+
+  @if (loading()) {
+    <div class="empty-state">Carregando contas...</div>
+  } @else if (accounts().length === 0) {
+    <div class="empty-state">
+      <h2>Nenhuma conta cadastrada</h2>
+      <p>Adicione sua primeira conta para começar a controlar seu dinheiro.</p>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="openCreateForm()">
+        Cadastrar primeira conta
+      </button>
+    </div>
+  } @else {
+    <div class="accounts-grid">
+      @for (account of accounts(); track account.id) {
+        <article class="account-card">
+          <header class="account-card__header">
+            <div class="account-card__identity">
+              <span
+                class="account-indicator"
+                [style.background]="account.color">
+              </span>
+
+              <div>
+                <h2>{{ account.name }}</h2>
+                <span>{{ getAccountTypeLabel(account.type) }}</span>
+              </div>
+            </div>
+
+            <span
+              class="account-status"
+              [class.account-status--inactive]="!account.active">
+              {{ account.active ? 'Ativa' : 'Inativa' }}
+            </span>
+          </header>
+
+          <div class="account-card__balance">
+            <span>Saldo atual</span>
+            <strong>{{ formatCurrency(account.balance) }}</strong>
+          </div>
+
+          <div class="account-card__details">
+            <div>
+              <span>Saldo inicial</span>
+              <strong>{{ formatCurrency(account.initialBalance) }}</strong>
+            </div>
+
+            <div>
+              <span>Receitas</span>
+              <strong class="income-value">
+                {{ formatCurrency(account.totalIncome) }}
+              </strong>
+            </div>
+
+            <div>
+              <span>Despesas</span>
+              <strong class="expense-value">
+                {{ formatCurrency(account.totalExpenses) }}
+              </strong>
+            </div>
+
+            <div>
+              <span>Transferências recebidas</span>
+              <strong>{{ formatCurrency(account.totalTransfersIn) }}</strong>
+            </div>
+
+            <div>
+              <span>Transferências enviadas</span>
+              <strong>{{ formatCurrency(account.totalTransfersOut) }}</strong>
+            </div>
+          </div>
+
+          <footer class="account-card__actions">
+            @if (deletingId() === account.id) {
+              <span>Confirmar exclusão?</span>
+
+              <button
+                type="button"
+                class="btn-danger"
+                [disabled]="deleting()"
+                (click)="confirmDelete(account.id)">
+                Sim, excluir
+              </button>
+
+              <button
+                type="button"
+                class="btn-secondary"
+                [disabled]="deleting()"
+                (click)="cancelDelete()">
+                Cancelar
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="openEditForm(account)">
+                Editar
+              </button>
+
+              <button
+                type="button"
+                class="btn-danger"
+                (click)="askDelete(account.id)">
+                Excluir
+              </button>
+            }
+          </footer>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+@if (formVisible()) {
+  <div class="modal-backdrop">
+    <section
+      class="account-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Formulário de conta">
+
+      @if (error()) {
+        <div class="error-message" role="alert">
+          {{ error() }}
+        </div>
+      }
+
+      <app-account-form
+        [account]="selectedAccount()"
+        [saving]="saving()"
+        (save)="saveAccount($event)"
+        (cancel)="closeForm()">
+      </app-account-form>
+    </section>
+  </div>
+}

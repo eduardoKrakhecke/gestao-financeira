@@ -52,7 +52,7 @@ export const routes: Routes = [
             .then(m => m.BUDGETS_ROUTES)
       },
       {
-        path: 'goals',
+        path: 'pages',
         loadChildren: () =>
           import('./features/goals/goals.routes')
             .then(m => m.GOALS_ROUTES)

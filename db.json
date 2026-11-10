@@ -37,6 +37,16 @@
       "currency": "BRL",
       "color": "#16a34a",
       "active": true
+    },
+    {
+      "name": "Santander",
+      "type": "checking",
+      "initialBalance": 350000,
+      "currency": "BRL",
+      "color": "#31eb24",
+      "userId": "1",
+      "active": true,
+      "id": "6bPIHr-"
     }
   ],
   "categories": [
@@ -95,13 +105,6 @@
   ],
   "budgets": [
     {
-      "id": "1",
-      "userId": "1",
-      "categoryId": "2",
-      "month": "2026-11",
-      "limit": 1000
-    },
-    {
       "categoryId": "3",
       "month": "2026-11",
       "limit": 500000,
@@ -118,6 +121,15 @@
       "currentAmount": 2000,
       "deadline": "2027-12-31",
       "status": "active"
+    },
+    {
+      "name": "emergencia",
+      "targetAmount": 50000,
+      "currentAmount": 30000,
+      "deadline": "2026-11-12",
+      "userId": "1",
+      "status": "active",
+      "id": "-Hbc0gd"
     }
   ],
   "transfers": []
