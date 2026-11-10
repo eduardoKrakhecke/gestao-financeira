@@ -1,0 +1,222 @@
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="transaction-form">
+
+  <div class="form-section">
+    <h3>Informações do lançamento</h3>
+    <p class="section-description">
+      Informe os dados principais da sua movimentação financeira.
+    </p>
+
+    <div class="form-group">
+      <label>Tipo de movimentação</label>
+
+      <div class="type-selector">
+        <button
+          type="button"
+          class="type-option income"
+          [class.active]="form.controls.type.value === 'income'"
+          (click)="form.controls.type.setValue('income'); onTypeChange()"
+        >
+          <span class="type-icon">↗</span>
+          Receita
+        </button>
+
+        <button
+          type="button"
+          class="type-option expense"
+          [class.active]="form.controls.type.value === 'expense'"
+          (click)="form.controls.type.setValue('expense'); onTypeChange()"
+        >
+          <span class="type-icon">↘</span>
+          Despesa
+        </button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descrição</label>
+
+      <input
+        id="description"
+        type="text"
+        formControlName="description"
+        placeholder="Ex.: Salário mensal, supermercado..."
+      />
+
+      @if (
+        form.controls.description.touched &&
+        form.controls.description.invalid
+        ) {
+        <small class="error-message">
+          Informe uma descrição com pelo menos 2 caracteres.
+        </small>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="amount">Valor (R$)</label>
+
+      <div class="input-with-prefix">
+        <span>R$</span>
+        <input
+          id="amount"
+          type="number"
+          formControlName="amount"
+          placeholder="0,00"
+          min="0.01"
+          step="0.01"
+        />
+      </div>
+
+      @if (
+        form.controls.amount.touched &&
+        form.controls.amount.invalid
+        ) {
+        <small class="error-message">
+          Informe um valor maior que zero.
+        </small>
+      }
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="categoryId">Categoria</label>
+
+        <select id="categoryId" formControlName="categoryId">
+          <option value="">Selecione uma categoria</option>
+
+          @for (category of filteredCategories; track category.id) {
+            <option [value]="category.id">
+              {{ category.name }}
+            </option>
+          }
+        </select>
+
+        @if (
+          form.controls.categoryId.touched &&
+          form.controls.categoryId.invalid
+          ) {
+          <small class="error-message">
+            Selecione uma categoria.
+          </small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="accountId">Conta</label>
+
+        <select id="accountId" formControlName="accountId">
+          <option value="">Selecione uma conta</option>
+
+          @for (account of accounts; track account.id) {
+            <option [value]="account.id">
+              {{ account.name }}
+            </option>
+          }
+        </select>
+
+        @if (
+          form.controls.accountId.touched &&
+          form.controls.accountId.invalid
+          ) {
+          <small class="error-message">
+            Selecione uma conta.
+          </small>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h3>Datas e situação</h3>
+    <p class="section-description">
+      Controle o vencimento e o pagamento da movimentação.
+    </p>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="dueDate">Data de vencimento</label>
+
+        <input
+          id="dueDate"
+          type="date"
+          formControlName="dueDate"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status</label>
+
+        <select
+          id="status"
+          formControlName="status"
+          (change)="onStatusChange()"
+        >
+          <option value="pending">Pendente</option>
+          <option value="paid">Pago</option>
+          <option value="cancelled">Cancelado</option>
+        </select>
+      </div>
+    </div>
+
+    @if (isPaid) {
+      <div class="form-group">
+        <label for="paymentDate">Data de pagamento</label>
+
+        <input
+          id="paymentDate"
+          type="date"
+          formControlName="paymentDate"
+        />
+
+        @if (
+          form.controls.paymentDate.touched &&
+          form.controls.paymentDate.invalid
+          ) {
+          <small class="error-message">
+            Informe a data de pagamento.
+          </small>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="form-section">
+    <h3>Observações</h3>
+
+    <div class="form-group">
+      <label for="notes">Observações (opcional)</label>
+
+      <textarea
+        id="notes"
+        formControlName="notes"
+        rows="3"
+        placeholder="Adicione informações complementares..."
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button
+      type="button"
+      class="btn-secondary"
+      (click)="cancel.emit()"
+      [disabled]="saving"
+    >
+      Cancelar
+    </button>
+
+    <button
+      type="submit"
+      class="btn-primary"
+      [disabled]="saving"
+    >
+      @if (saving) {
+        Salvando...
+      } @else {
+        {{ isEditing ? 'Salvar alterações' : 'Cadastrar lançamento' }}
+      }
+    </button>
+  </div>
+
+</form>

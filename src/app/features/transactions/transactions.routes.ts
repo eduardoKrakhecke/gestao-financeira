@@ -1,11 +1,11 @@
-import { Routes } from '@angular/router';
 
-import { FeaturePlaceholderComponent } from '../../shared/components/feature-placeholder/feature-placeholder.component';
+import { Routes } from '@angular/router';
 
 export const TRANSACTIONS_ROUTES: Routes = [
   {
     path: '',
-    component: FeaturePlaceholderComponent,
-    data: { title: 'Transações' }
+    loadComponent: () =>
+      import('./pages/transactions/transactions.component')
+        .then(m => m.TransactionsComponent)
   }
 ];

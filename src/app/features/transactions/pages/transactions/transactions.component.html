@@ -1,0 +1,422 @@
+
+<div class="transactions-page">
+
+  <header class="page-header">
+    <div>
+      <span class="page-eyebrow">FINANCEIRO</span>
+      <h1>Transações</h1>
+      <p>Gerencie suas receitas e despesas em um só lugar.</p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn-export"
+        (click)="exportCsv()"
+        [disabled]="filteredTransactions().length === 0"
+      >
+        <span>↓</span>
+        Exportar CSV
+      </button>
+
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="openCreateForm()"
+      >
+        <span>+</span>
+        Nova transação
+      </button>
+    </div>
+  </header>
+
+  @if (success()) {
+    <div class="alert alert-success" role="status">
+      {{ success() }}
+      <button type="button" (click)="success.set('')" aria-label="Fechar">×</button>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="alert alert-error" role="alert">
+      {{ error() }}
+      <button type="button" (click)="error.set('')" aria-label="Fechar">×</button>
+    </div>
+  }
+
+  <section class="summary-grid">
+    <article class="summary-card">
+      <div class="summary-icon income-icon">↗</div>
+      <div>
+        <span class="summary-label">Receitas cadastradas</span>
+        <strong>{{ totalIncome() / 100 | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon expense-icon">↘</div>
+      <div>
+        <span class="summary-label">Despesas cadastradas</span>
+        <strong>{{ totalExpenses() / 100 | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon pending-icon">◷</div>
+      <div>
+        <span class="summary-label">Lançamentos pendentes</span>
+        <strong>{{ pendingCount() }}</strong>
+      </div>
+    </article>
+
+    <article class="summary-card">
+      <div class="summary-icon total-icon">▤</div>
+      <div>
+        <span class="summary-label">Total de lançamentos</span>
+        <strong>{{ transactions().length }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <section class="transactions-panel">
+    <div class="panel-header">
+      <div>
+        <h2>Todos os lançamentos</h2>
+        <p>Consulte e gerencie suas movimentações financeiras.</p>
+      </div>
+
+      <span class="result-count">
+        {{ filteredTransactions().length }} registros
+      </span>
+    </div>
+
+    <div class="filters">
+      <div class="search-field">
+        <span>⌕</span>
+        <input
+          type="search"
+          placeholder="Buscar por descrição, categoria ou conta..."
+          [value]="search()"
+          (input)="search.set($any($event.target).value); onFilterChange()"
+        />
+      </div>
+
+      <div class="filter-grid">
+        <select
+          aria-label="Filtrar por tipo"
+          [value]="typeFilter()"
+          (change)="typeFilter.set($any($event.target).value); onFilterChange()"
+        >
+          <option value="all">Todos os tipos</option>
+          <option value="income">Receitas</option>
+          <option value="expense">Despesas</option>
+        </select>
+
+        <select
+          aria-label="Filtrar por status"
+          [value]="statusFilter()"
+          (change)="statusFilter.set($any($event.target).value); onFilterChange()"
+        >
+          <option value="all">Todos os status</option>
+          <option value="paid">Pago</option>
+          <option value="pending">Pendente</option>
+          <option value="cancelled">Cancelado</option>
+        </select>
+
+        <select
+          aria-label="Filtrar por categoria"
+          [value]="categoryFilter()"
+          (change)="categoryFilter.set($any($event.target).value); onFilterChange()"
+        >
+          <option value="all">Todas as categorias</option>
+          @for (category of categories(); track category.id) {
+            <option [value]="category.id">{{ category.name }}</option>
+          }
+        </select>
+
+        <select
+          aria-label="Filtrar por conta"
+          [value]="accountFilter()"
+          (change)="accountFilter.set($any($event.target).value); onFilterChange()"
+        >
+          <option value="all">Todas as contas</option>
+          @for (account of accounts(); track account.id) {
+            <option [value]="account.id">{{ account.name }}</option>
+          }
+        </select>
+
+        <div class="date-filter">
+          <label for="startDate">De</label>
+          <input
+            id="startDate"
+            type="date"
+            [value]="startDate()"
+            (change)="startDate.set($any($event.target).value); onFilterChange()"
+          />
+        </div>
+
+        <div class="date-filter">
+          <label for="endDate">Até</label>
+          <input
+            id="endDate"
+            type="date"
+            [value]="endDate()"
+            (change)="endDate.set($any($event.target).value); onFilterChange()"
+          />
+        </div>
+      </div>
+
+      <div class="filter-footer">
+        <button type="button" class="btn-clear" (click)="clearFilters()">
+          Limpar filtros
+        </button>
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-state">
+        <span class="loading-spinner"></span>
+        <p>Carregando transações...</p>
+      </div>
+    } @else if (paginatedTransactions().length > 0) {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Conta</th>
+            <th>Vencimento</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th class="actions-heading">Ações</th>
+          </tr>
+          </thead>
+
+          <tbody>
+            @for (
+                transaction of paginatedTransactions();
+              track transaction.id
+              ) {
+              <tr>
+                <td>
+                  <div class="transaction-description">
+                    <span
+                      class="transaction-type-icon"
+                      [class.income]="transaction.type === 'income'"
+                      [class.expense]="transaction.type === 'expense'"
+                    >
+                      {{ transaction.type === 'income' ? '↗' : '↘' }}
+                    </span>
+
+                    <div>
+                      <strong>{{ transaction.description }}</strong>
+                      <small>
+                        {{ transaction.type === 'income' ? 'Receita' : 'Despesa' }}
+                      </small>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="category-label">
+                    <span
+                      class="category-dot"
+                      [style.backgroundColor]="transaction.categoryColor"
+                    ></span>
+                    {{ transaction.categoryName }}
+                  </span>
+                </td>
+
+                <td>{{ transaction.accountName }}</td>
+
+                <td>{{ transaction.dueDate | date:'dd/MM/yyyy':'':'pt-BR' }}</td>
+
+                <td>
+                  <strong
+                    class="transaction-amount"
+                    [class.income-text]="transaction.type === 'income'"
+                    [class.expense-text]="transaction.type === 'expense'"
+                  >
+                    {{ transaction.type === 'income' ? '+' : '-' }}
+                    {{ transaction.amount / 100 | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                  </strong>
+                </td>
+
+                <td>
+                  <span
+                    class="status-badge"
+                    [class.status-paid]="transaction.status === 'paid'"
+                    [class.status-pending]="transaction.status === 'pending'"
+                    [class.status-cancelled]="transaction.status === 'cancelled'"
+                  >
+                    {{ getStatusLabel(transaction.status) }}
+                  </span>
+                </td>
+
+                <td>
+                  <div class="row-actions">
+                    <button
+                      type="button"
+                      class="action-button"
+                      title="Editar transação"
+                      aria-label="Editar transação"
+                      (click)="openEditForm(transaction)"
+                    >
+                      ✎
+                    </button>
+
+                    <button
+                      type="button"
+                      class="action-button delete-action"
+                      title="Excluir transação"
+                      aria-label="Excluir transação"
+                      (click)="askDelete(transaction)"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <span>
+          Página {{ currentPage() }} de {{ totalPages() }}
+        </span>
+
+        <div class="pagination-actions">
+          <button
+            type="button"
+            (click)="changePage(currentPage() - 1)"
+            [disabled]="currentPage() === 1"
+          >
+            Anterior
+          </button>
+
+          <button
+            type="button"
+            (click)="changePage(currentPage() + 1)"
+            [disabled]="currentPage() === totalPages()"
+          >
+            Próxima
+          </button>
+        </div>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <div class="empty-icon">▤</div>
+        <h3>Nenhuma transação encontrada</h3>
+        <p>
+          Não encontramos lançamentos com os filtros selecionados.
+          Experimente limpar os filtros ou cadastrar uma nova transação.
+        </p>
+
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="clearFilters()"
+        >
+          Limpar filtros
+        </button>
+      </div>
+    }
+  </section>
+</div>
+
+@if (formOpen()) {
+  <div class="modal-backdrop" (click)="closeForm()">
+    <section
+      class="modal-container"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="transaction-modal-title"
+      (click)="$event.stopPropagation()"
+    >
+      <header class="modal-header">
+        <div>
+          <h2 id="transaction-modal-title">
+            {{ selectedTransaction() ? 'Editar transação' : 'Nova transação' }}
+          </h2>
+          <p>Preencha os dados do lançamento financeiro.</p>
+        </div>
+
+        <button
+          type="button"
+          class="modal-close"
+          (click)="closeForm()"
+          [disabled]="saving()"
+          aria-label="Fechar formulário"
+        >
+          ×
+        </button>
+      </header>
+
+      <div class="modal-body">
+        @if (accounts().length === 0) {
+          <div class="alert alert-error">
+            Cadastre uma conta ativa antes de criar uma transação.
+          </div>
+        } @else if (categories().length === 0) {
+          <div class="alert alert-error">
+            Cadastre categorias antes de criar uma transação.
+          </div>
+        }
+
+        <app-transaction-form
+          [transaction]="selectedTransaction()"
+          [accounts]="accounts()"
+          [categories]="categories()"
+          [saving]="saving()"
+          (save)="saveTransaction($event)"
+          (cancel)="closeForm()"
+        />
+      </div>
+    </section>
+  </div>
+}
+
+@if (transactionToDelete(); as transaction) {
+  <div class="modal-backdrop" (click)="cancelDelete()">
+    <section
+      class="confirm-modal"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="delete-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="confirm-icon">!</div>
+
+      <h2 id="delete-title">Excluir transação?</h2>
+
+      <p>
+        Você está prestes a excluir
+        <strong>{{ transaction.description }}</strong>.
+        Essa ação não poderá ser desfeita.
+      </p>
+
+      <div class="confirm-actions">
+        <button
+          type="button"
+          class="btn-secondary"
+          (click)="cancelDelete()"
+          [disabled]="deleting()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn-danger"
+          (click)="confirmDelete()"
+          [disabled]="deleting()"
+        >
+          {{ deleting() ? 'Excluindo...' : 'Sim, excluir' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}
