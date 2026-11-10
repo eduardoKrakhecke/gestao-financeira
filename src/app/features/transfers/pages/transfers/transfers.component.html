@@ -1,0 +1,154 @@
+<section class="transfers-page">
+  <header class="page-header">
+    <div>
+      <h1>Transferências</h1>
+      <p>Movimente valores entre suas contas sem alterar suas receitas e despesas.</p>
+    </div>
+
+    <button
+      type="button"
+      class="btn-primary"
+      [disabled]="activeAccounts().length < 2"
+      (click)="openCreateForm()">
+      + Nova transferência
+    </button>
+  </header>
+
+  @if (error()) {
+    <div class="error-message" role="alert">
+      {{ error() }}
+    </div>
+  }
+
+  <div class="transfers-overview">
+    <article class="overview-card">
+      <span>Total de transferências</span>
+      <strong>{{ transfers().length }}</strong>
+    </article>
+
+    <article class="overview-card">
+      <span>Volume movimentado</span>
+      <strong>{{ formatCurrency(totalTransferred()) }}</strong>
+    </article>
+
+    <article class="overview-card">
+      <span>Contas disponíveis</span>
+      <strong>{{ activeAccounts().length }}</strong>
+    </article>
+  </div>
+
+  @if (activeAccounts().length < 2) {
+    <div class="info-message">
+      Você precisa ter pelo menos duas contas ativas para realizar transferências.
+      <a routerLink="/accounts">Gerenciar contas</a>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="empty-state">Carregando transferências...</div>
+  } @else if (transfers().length === 0) {
+    <div class="empty-state">
+      <h2>Nenhuma transferência registrada</h2>
+      <p>Quando você movimentar valores entre suas contas, o histórico aparecerá aqui.</p>
+
+      @if (activeAccounts().length >= 2) {
+        <button
+          type="button"
+          class="btn-primary"
+          (click)="openCreateForm()">
+          Realizar primeira transferência
+        </button>
+      }
+    </div>
+  } @else {
+    <div class="transfers-list">
+      @for (transfer of transfers(); track transfer.id) {
+        <article class="transfer-card">
+          <div class="transfer-card__icon">
+            <span>↔</span>
+          </div>
+
+          <div class="transfer-card__main">
+            <h2>{{ transfer.description }}</h2>
+
+            <div class="transfer-route">
+              <span>{{ transfer.fromAccountName }}</span>
+              <span class="transfer-route__arrow">→</span>
+              <span>{{ transfer.toAccountName }}</span>
+            </div>
+
+            <span class="transfer-card__date">
+              {{ formatDate(transfer.date) }}
+            </span>
+          </div>
+
+          <div class="transfer-card__amount">
+            <strong>{{ formatCurrency(transfer.amount) }}</strong>
+            <span>Transferência</span>
+          </div>
+
+          <div class="transfer-card__actions">
+            @if (deletingId() === transfer.id) {
+              <span>Excluir transferência?</span>
+
+              <button
+                type="button"
+                class="btn-danger"
+                [disabled]="deleting()"
+                (click)="confirmDelete(transfer.id)">
+                Confirmar
+              </button>
+
+              <button
+                type="button"
+                class="btn-secondary"
+                [disabled]="deleting()"
+                (click)="cancelDelete()">
+                Cancelar
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="btn-secondary"
+                (click)="openEditForm(transfer)">
+                Editar
+              </button>
+
+              <button
+                type="button"
+                class="btn-danger"
+                (click)="askDelete(transfer.id)">
+                Excluir
+              </button>
+            }
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+@if (formVisible()) {
+  <div class="modal-backdrop">
+    <section
+      class="transfer-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Formulário de transferência">
+
+      @if (error()) {
+        <div class="error-message" role="alert">
+          {{ error() }}
+        </div>
+      }
+
+      <app-transfer-form
+        [accounts]="activeAccounts()"
+        [transfer]="selectedTransfer()"
+        [saving]="saving()"
+        (save)="saveTransfer($event)"
+        (cancel)="closeForm()">
+      </app-transfer-form>
+    </section>
+  </div>
+}

@@ -1,0 +1,329 @@
+
+<div class="reports-page">
+  <header class="page-header">
+    <div>
+      <span class="eyebrow">ANÁLISE FINANCEIRA</span>
+      <h1>Relatórios</h1>
+      <p>Acompanhe seus resultados e entenda para onde vai seu dinheiro.</p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn btn-outline"
+        (click)="exportCSV()"
+        [disabled]="!report() || loading()"
+      >
+        <span class="material-symbol">download</span>
+        Exportar CSV
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="printReport()"
+        [disabled]="!report() || loading()"
+      >
+        <span class="material-symbol">picture_as_pdf</span>
+        Salvar PDF
+      </button>
+    </div>
+  </header>
+
+  <section class="filter-card">
+    <div class="filter-heading">
+      <div>
+        <h2>Período do relatório</h2>
+        <p>Selecione o intervalo que deseja analisar.</p>
+      </div>
+    </div>
+
+    <div class="filter-controls">
+      <label>
+        Data inicial
+        <input
+          type="date"
+          [value]="startDate()"
+          (change)="onStartDateChange($any($event.target).value)"
+        />
+      </label>
+
+      <label>
+        Data final
+        <input
+          type="date"
+          [value]="endDate()"
+          (change)="onEndDateChange($any($event.target).value)"
+        />
+      </label>
+
+      <button
+        type="button"
+        class="btn btn-primary filter-button"
+        (click)="loadReports()"
+        [disabled]="loading()"
+      >
+        {{ loading() ? 'Carregando...' : 'Aplicar filtros' }}
+      </button>
+    </div>
+  </section>
+
+  @if (error()) {
+    <div class="error-message">
+      {{ error() }}
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Preparando seus relatórios...</p>
+    </div>
+  } @else {
+    @if (report(); as data) {
+      <section class="summary-grid">
+      <article class="summary-card income-card">
+        <div class="summary-icon">↗</div>
+        <span>Receitas realizadas</span>
+        <strong>{{ formatCurrency(data.totalIncome) }}</strong>
+        <small>Entradas pagas no período</small>
+      </article>
+
+      <article class="summary-card expense-card">
+        <div class="summary-icon">↘</div>
+        <span>Despesas realizadas</span>
+        <strong>{{ formatCurrency(data.totalExpenses) }}</strong>
+        <small>Saídas pagas no período</small>
+      </article>
+
+      <article class="summary-card balance-card">
+        <div class="summary-icon">＝</div>
+        <span>Resultado do período</span>
+        <strong [class.negative]="data.balance < 0">
+          {{ formatCurrency(data.balance) }}
+        </strong>
+        <small>Receitas menos despesas</small>
+      </article>
+
+      <article class="summary-card pending-card">
+        <div class="summary-icon">◷</div>
+        <span>Movimentações pendentes</span>
+        <strong>
+          {{ formatCurrency(data.pendingIncome + data.pendingExpenses) }}
+        </strong>
+        <small>
+          Receitas: {{ formatCurrency(data.pendingIncome) }}
+          · Despesas: {{ formatCurrency(data.pendingExpenses) }}
+        </small>
+      </article>
+    </section>
+
+    <section class="charts-grid">
+      <article class="report-card evolution-card">
+        <div class="card-heading">
+          <div>
+            <h2>Receitas x despesas</h2>
+            <p>Comparativo mensal das movimentações pagas.</p>
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas #monthlyChart></canvas>
+        </div>
+      </article>
+
+      <article class="report-card category-card">
+        <div class="card-heading">
+          <div>
+            <h2>Despesas por categoria</h2>
+            <p>Distribuição dos gastos no período.</p>
+          </div>
+        </div>
+
+        @if (data.expensesByCategory.length > 0) {
+          <div class="chart-container">
+            <canvas #categoryChart></canvas>
+          </div>
+        } @else {
+          <div class="empty-chart">
+            <span>◌</span>
+            <p>Nenhuma despesa paga encontrada neste período.</p>
+          </div>
+        }
+      </article>
+    </section>
+
+    <section class="report-card">
+      <div class="card-heading">
+        <div>
+          <h2>Despesas por categoria</h2>
+          <p>Veja quais categorias concentram seus gastos.</p>
+        </div>
+      </div>
+
+      @if (data.expensesByCategory.length > 0) {
+        <div class="category-list">
+          @for (category of data.expensesByCategory; track category.categoryId) {
+            <div class="category-row">
+              <div class="category-info">
+                <span
+                  class="category-dot"
+                  [style.background]="category.color"
+                ></span>
+                <span>{{ category.categoryName }}</span>
+              </div>
+
+              <div class="category-progress">
+                <div class="progress-track">
+                  <div
+                    class="progress-value"
+                    [style.width.%]="category.percentage"
+                    [style.background]="category.color"
+                  ></div>
+                </div>
+                <small>{{ category.percentage | number:'1.1-1' }}%</small>
+              </div>
+
+              <strong>{{ formatCurrency(category.total) }}</strong>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="empty-message">Não há despesas pagas para exibir.</p>
+      }
+    </section>
+
+    <section class="report-card">
+      <div class="card-heading">
+        <div>
+          <h2>Orçamento x realizado</h2>
+          <p>Compare os limites definidos com as despesas pagas.</p>
+        </div>
+      </div>
+
+      @if (data.budgets.length > 0) {
+        <div class="budget-list">
+          @for (budget of data.budgets; track budget.categoryId + budget.limit) {
+            <div class="budget-row">
+              <div class="budget-info">
+                <div>
+                  <span
+                    class="category-dot"
+                    [style.background]="budget.color"
+                  ></span>
+                  <strong>{{ budget.categoryName }}</strong>
+                </div>
+
+                <small>
+                  {{ formatCurrency(budget.spent) }}
+                  de
+                  {{ formatCurrency(budget.limit) }}
+                </small>
+              </div>
+
+              <div class="progress-track">
+                <div
+                  class="progress-value"
+                  [class.warning]="budget.percentage >= 80"
+                  [class.exceeded]="budget.percentage >= 100"
+                  [style.width.%]="budget.percentage > 100 ? 100 : budget.percentage"
+                ></div>
+              </div>
+
+              <div class="budget-result">
+                <strong>{{ budget.percentage | number:'1.0-0' }}%</strong>
+                <small
+                  [class.negative]="budget.remaining < 0"
+                >
+                  {{
+                    budget.remaining >= 0
+                      ? 'Restam ' + formatCurrency(budget.remaining)
+                      : 'Excedido em ' + formatCurrency(-budget.remaining)
+                  }}
+                </small>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="empty-message">
+          Não existem orçamentos cadastrados para o período selecionado.
+        </p>
+      }
+    </section>
+
+    <section class="report-card">
+      <div class="card-heading">
+        <div>
+          <h2>Movimentações do período</h2>
+          <p>Histórico das receitas e despesas encontradas.</p>
+        </div>
+
+        <span class="record-count">
+          {{ data.transactions.length }} registros
+        </span>
+      </div>
+
+      @if (data.transactions.length > 0) {
+        <div class="table-wrapper">
+          <table>
+            <thead>
+            <tr>
+              <th>Descrição</th>
+              <th>Tipo</th>
+              <th>Data</th>
+              <th>Status</th>
+              <th class="text-right">Valor</th>
+            </tr>
+            </thead>
+
+            <tbody>
+              @for (transaction of data.transactions; track transaction.id) {
+                <tr>
+                  <td>{{ transaction.description }}</td>
+
+                  <td>
+                    <span
+                      class="type-label"
+                      [class.income]="transaction.type === 'income'"
+                      [class.expense]="transaction.type === 'expense'"
+                    >
+                      {{ transaction.type === 'income' ? 'Receita' : 'Despesa' }}
+                    </span>
+                  </td>
+
+                  <td>
+                    {{ transaction.paymentDate || transaction.dueDate | date:'dd/MM/yyyy':'':'pt-BR' }}
+                  </td>
+
+                  <td>
+                    <span
+                      class="status-label"
+                      [class.paid]="transaction.status === 'paid'"
+                      [class.pending]="transaction.status === 'pending'"
+                    >
+                      {{
+                        transaction.status === 'paid'
+                          ? 'Pago'
+                          : 'Pendente'
+                      }}
+                    </span>
+                  </td>
+
+                  <td class="text-right">
+                    <strong>{{ formatCurrency(transaction.amount) }}</strong>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="empty-message">
+          Nenhuma movimentação encontrada neste período.
+        </p>
+      }
+      </section>
+    }
+  }
+</div>

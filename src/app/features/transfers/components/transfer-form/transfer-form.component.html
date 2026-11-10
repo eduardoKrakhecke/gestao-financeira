@@ -1,0 +1,133 @@
+<form class="transfer-form" [formGroup]="form" (ngSubmit)="submit()">
+  <header class="transfer-form__header">
+    <div>
+      <h2>{{ transfer ? 'Editar transferência' : 'Nova transferência' }}</h2>
+      <p>Movimente dinheiro entre suas contas.</p>
+    </div>
+
+    <button
+      type="button"
+      class="close-button"
+      aria-label="Fechar formulário"
+      [disabled]="saving"
+      (click)="cancel.emit()">
+      &times;
+    </button>
+  </header>
+
+  <div class="form-field">
+    <label for="from-account">Conta de origem</label>
+
+    <select id="from-account" formControlName="fromAccountId">
+      <option value="">Selecione a conta de origem</option>
+
+      @for (account of accounts; track account.id) {
+        <option [value]="account.id">
+          {{ account.name }} — Saldo: {{ account.balance / 100 | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+        </option>
+      }
+    </select>
+
+    @if (
+      form.controls.fromAccountId.touched &&
+      form.controls.fromAccountId.invalid
+      ) {
+      <small class="form-error">Selecione a conta de origem.</small>
+    }
+  </div>
+
+  <div class="transfer-direction">
+    <span>↓</span>
+    <small>Transferir para</small>
+  </div>
+
+  <div class="form-field">
+    <label for="to-account">Conta de destino</label>
+
+    <select id="to-account" formControlName="toAccountId">
+      <option value="">Selecione a conta de destino</option>
+
+      @for (account of destinationAccounts; track account.id) {
+        <option [value]="account.id">
+          {{ account.name }}
+        </option>
+      }
+    </select>
+
+    @if (
+      form.controls.toAccountId.touched &&
+      form.controls.toAccountId.invalid
+      ) {
+      <small class="form-error">
+        Selecione uma conta de destino diferente da origem.
+      </small>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="transfer-amount">Valor da transferência (R$)</label>
+
+    <input
+      id="transfer-amount"
+      type="number"
+      formControlName="amount"
+      min="0.01"
+      step="0.01"
+      placeholder="0,00">
+
+    @if (
+      form.controls.amount.touched &&
+      form.controls.amount.invalid
+      ) {
+      <small class="form-error">Informe um valor maior que zero.</small>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="transfer-date">Data</label>
+
+    <input
+      id="transfer-date"
+      type="date"
+      formControlName="date">
+
+    @if (
+      form.controls.date.touched &&
+      form.controls.date.invalid
+      ) {
+      <small class="form-error">Informe a data da transferência.</small>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="transfer-description">Descrição</label>
+
+    <input
+      id="transfer-description"
+      type="text"
+      formControlName="description"
+      maxlength="120"
+      placeholder="Ex.: Reserva mensal">
+
+    @if (
+      form.controls.description.touched &&
+      form.controls.description.invalid
+      ) {
+      <small class="form-error">Informe uma descrição.</small>
+    }
+  </div>
+
+  <footer class="transfer-form__actions">
+    <button
+      type="button"
+      class="btn-secondary"
+      [disabled]="saving"
+      (click)="cancel.emit()">
+      Cancelar
+    </button>
+
+    <button type="submit" class="btn-primary" [disabled]="saving">
+      {{ saving ? 'Salvando...' : (transfer ? 'Salvar alterações' : 'Transferir') }}
+    </button>
+  </footer>
+</form>
