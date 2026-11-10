@@ -1,59 +1,168 @@
-# GestaoFinanceira
+# FinanceFlow
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
+Aplicação web de gestão financeira pessoal, desenvolvida com Angular. O sistema permite organizar contas, categorias, transações, orçamentos, metas e relatórios em um único lugar.
 
-## Development server
+> Este projeto utiliza o JSON Server como API local para fins de estudo e demonstração.
 
-To start a local development server, run:
+## Tecnologias
 
-```bash
-ng serve
-```
+- Angular 19 com componentes standalone e rotas lazy-loaded;
+- TypeScript e RxJS;
+- Angular Reactive Forms;
+- Angular SSR;
+- SCSS com temas claro e escuro;
+- Chart.js para gráficos;
+- JSON Server para persistência local;
+- Jasmine/Karma para testes unitários;
+- Playwright para testes end-to-end.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Pré-requisitos
 
-## Code scaffolding
+- Node.js 18.19 ou superior;
+- npm;
+- navegador atualizado.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Instalação
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+Clone o repositório e instale as dependências:
 
 ```bash
-ng build
+git clone https://github.com/eduardoKrakhecke/gestao-financeira.git
+cd gestao-financeira
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Execução local
 
-## Running unit tests
+O projeto precisa do Angular e do JSON Server em execução. Abra dois terminais:
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Terminal 1 — API local:
 
 ```bash
-ng test
+npm run api
 ```
 
-## Running end-to-end tests
+A API ficará disponível em `http://localhost:3000`.
 
-For end-to-end (e2e) testing, run:
+Terminal 2 — aplicação Angular:
 
 ```bash
-ng e2e
+npm start
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+A aplicação ficará disponível em `http://localhost:4200`.
 
-## Additional Resources
+### Usuário de demonstração
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+As credenciais disponíveis podem ser consultadas em `db.json`. No banco inicial, existe o seguinte usuário:
+
+```text
+E-mail: eduardo@example.com
+Senha: demo-only
+```
+
+## Funcionalidades
+
+- Login, cadastro e proteção de rotas;
+- Dashboard com resumo financeiro;
+- Cadastro e edição de contas;
+- Cadastro, edição e exclusão de categorias;
+- Cadastro e acompanhamento de transações;
+- Orçamentos por categoria e período;
+- Metas financeiras;
+- Transferências entre contas;
+- Relatórios com filtros por data, gráficos e exportação CSV;
+- Configurações de perfil, foto, preferências e senha;
+- Tema claro e escuro;
+- Layout responsivo com header e sidebar.
+
+## Rotas principais
+
+| Rota | Descrição |
+| --- | --- |
+| `/login` | Autenticação do usuário |
+| `/register` | Cadastro de usuário |
+| `/dashboard` | Visão geral das finanças |
+| `/transactions` | Transações financeiras |
+| `/accounts` | Contas bancárias e carteiras |
+| `/categories` | Categorias de receitas e despesas |
+| `/budgets` | Orçamentos |
+| `/pages` | Metas financeiras |
+| `/transfers` | Transferências |
+| `/reports` | Relatórios e gráficos |
+| `/settings` | Configurações do perfil e da aplicação |
+
+## Arquitetura de pastas
+
+```text
+src/
+├── app/
+│   ├── core/
+│   │   ├── auth/       # Autenticação, guards e interceptor
+│   │   ├── layout/     # Layout principal, header e sidebar
+│   │   └── services/   # Serviços globais
+│   ├── features/       # Módulos funcionais da aplicação
+│   │   ├── accounts/
+│   │   ├── budgets/
+│   │   ├── categories/
+│   │   ├── dashboard/
+│   │   ├── goals/
+│   │   ├── reports/
+│   │   ├── settings/
+│   │   ├── transactions/
+│   │   └── transfers/
+│   ├── shared/         # Componentes reutilizáveis
+│   ├── app.config.ts
+│   └── app.routes.ts
+├── environments/      # Configurações por ambiente
+└── styles/             # Variáveis, temas, formulários e botões
+```
+
+Cada feature mantém seus próprios componentes, páginas, modelos, serviços e rotas. As rotas principais carregam as funcionalidades sob demanda para reduzir o bundle inicial.
+
+## API local
+
+O arquivo `db.json` contém os dados simulados da aplicação. Os principais recursos são:
+
+```text
+users
+accounts
+categories
+transactions
+budgets
+goals
+transfers
+```
+
+O endereço da API é definido nos arquivos de ambiente:
+
+- `src/environments/environment.development.ts`;
+- `src/environments/environment.ts`.
+
+Por padrão, ambos apontam para `http://localhost:3000`.
+
+## Comandos disponíveis
+
+| Comando | Finalidade |
+| --- | --- |
+| `npm start` | Inicia o servidor de desenvolvimento Angular |
+| `npm run api` | Inicia o JSON Server |
+| `npm run build` | Gera o build da aplicação |
+| `npm run watch` | Gera o build em modo de observação |
+| `npm test` | Executa os testes unitários |
+| `npx playwright test` | Executa os testes end-to-end |
+| `npm run serve:ssr:gestao-financeira` | Executa o bundle SSR já compilado |
+
+Para executar o SSR, gere primeiro o build com `npm run build`.
+
+## Observações
+
+- A autenticação atual é demonstrativa e usa um token local armazenado no navegador;
+- O JSON Server não deve ser utilizado como backend de produção;
+- As senhas do banco local são apenas dados de demonstração;
+- Fotos de perfil são armazenadas como Data URL no usuário do `db.json`;
+- Para produção, recomenda-se utilizar uma API real, autenticação segura e armazenamento externo para imagens.
+
+## Licença
+
+Este projeto é destinado a estudos e demonstração de desenvolvimento com Angular.
