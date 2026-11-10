@@ -42,11 +42,11 @@
     <label for="account-balance">Saldo inicial (R$)</label>
     <input
       id="account-balance"
-      type="number"
+      type="text"
+      appCurrencyMask
+      inputmode="decimal"
       formControlName="initialBalance"
-      min="0"
-      step="0.01"
-      placeholder="0,00">
+      placeholder="R$ 0,00">
 
     @if (
       form.controls.initialBalance.touched &&

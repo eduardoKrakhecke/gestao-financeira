@@ -33,11 +33,11 @@
     <label for="goal-target">Valor desejado (R$)</label>
     <input
       id="goal-target"
-      type="number"
+      type="text"
+      appCurrencyMask
+      inputmode="decimal"
       formControlName="targetAmount"
-      min="0.01"
-      step="0.01"
-      placeholder="10000.00">
+      placeholder="R$ 0,00">
 
     @if (form.controls.targetAmount.touched && form.controls.targetAmount.invalid) {
       <small class="form-error">Informe um valor maior que zero.</small>
@@ -48,11 +48,11 @@
     <label for="goal-current">Valor acumulado (R$)</label>
     <input
       id="goal-current"
-      type="number"
+      type="text"
+      appCurrencyMask
+      inputmode="decimal"
       formControlName="currentAmount"
-      min="0"
-      step="0.01"
-      placeholder="2000.00">
+      placeholder="R$ 0,00">
 
     @if (form.controls.currentAmount.touched && form.controls.currentAmount.invalid) {
       <small class="form-error">

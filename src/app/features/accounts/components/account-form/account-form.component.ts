@@ -18,11 +18,12 @@ import {
   AccountSummary,
   AccountType
 } from '../../models/account.model';
+import { CurrencyMaskDirective } from '../../../../shared/directives/currency-mask.directive';
 
 @Component({
   selector: 'app-account-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CurrencyMaskDirective],
   templateUrl: './account-form.component.html',
   styleUrl: './account-form.component.scss'
 })

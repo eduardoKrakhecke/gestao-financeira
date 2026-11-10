@@ -1,10 +1,11 @@
 import { Component, EventEmitter, inject, Input, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BudgetCategory, BudgetCreate, BudgetSummary } from '../../models/budget.model';
+import { CurrencyMaskDirective } from '../../../../shared/directives/currency-mask.directive';
 
 @Component({
   selector: 'app-budget-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CurrencyMaskDirective],
   standalone: true,
   templateUrl: './budget-form.component.html',
   styleUrl: './budget-form.component.scss'

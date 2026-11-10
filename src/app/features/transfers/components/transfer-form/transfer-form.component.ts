@@ -20,11 +20,12 @@ import {
   TransferSummary
 } from '../../models/transfer.model';
 import { CommonModule } from '@angular/common';
+import { CurrencyMaskDirective } from '../../../../shared/directives/currency-mask.directive';
 
 @Component({
   selector: 'app-transfer-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, CurrencyMaskDirective],
   templateUrl: './transfer-form.component.html',
   styleUrl: './transfer-form.component.scss'
 })

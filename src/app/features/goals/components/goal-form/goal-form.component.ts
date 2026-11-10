@@ -14,11 +14,12 @@ import {
 } from '@angular/forms';
 
 import { GoalCreate, GoalSummary } from '../../models/goal.model';
+import { CurrencyMaskDirective } from '../../../../shared/directives/currency-mask.directive';
 
 @Component({
   selector: 'app-goal-form',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CurrencyMaskDirective],
   templateUrl: './goal-form.component.html',
   styleUrl: './goal-form.component.scss'
 })

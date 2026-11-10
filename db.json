@@ -29,16 +29,6 @@
       "active": true
     },
     {
-      "id": "2",
-      "userId": "1",
-      "name": "Carteira",
-      "type": "cash",
-      "initialBalance": 500,
-      "currency": "BRL",
-      "color": "#16a34a",
-      "active": true
-    },
-    {
       "name": "Santander",
       "type": "checking",
       "initialBalance": 350000,
@@ -47,6 +37,16 @@
       "userId": "1",
       "active": true,
       "id": "6bPIHr-"
+    },
+    {
+      "name": "Nu Bank",
+      "type": "checking",
+      "initialBalance": 522200,
+      "currency": "BRL",
+      "color": "#2563eb",
+      "userId": "1",
+      "active": true,
+      "id": "tguUCog"
     }
   ],
   "categories": [
